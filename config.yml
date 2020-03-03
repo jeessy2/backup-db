@@ -1,0 +1,14 @@
+# 服务器配置
+server:
+  ip:     # 服务器IP, 留空说明当前启动程序为服务器
+  server_port: 9977    # 服务器端口
+
+# 备份数据库最大保存天数(最少3天)
+max_save_days: 30
+
+# 存放备份的目录
+backup_path: D:\dbBackup
+
+# 通知邮件
+notice_email:
+  - 277172506@qq.com
