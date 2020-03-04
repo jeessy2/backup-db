@@ -1,6 +1,7 @@
 # 服务器配置
 server:
-  ip: 192.168.1.10    # 服务器IP, 留空说明当前启动程序为服务器
+  # ip:     # 服务器IP, 留空说明当前启动程序为服务器
+  ip: 127.0.0.1    # 服务器IP, 留空说明当前启动程序为服务器
   server_port: 9977    # 服务器端口
 
 # 备份数据库最大保存天数(最少3天)
@@ -12,7 +13,7 @@ backup_path: D:\dbBackup
 # 备份命令
 # name 是备份名称。 command为备份命令, $DATE$为变量, 格式为YYYY-MM-DD
 cmds:
-  - {name: test, command: pg_dump -a "host=192.168.1.11 port=5433 user=postgres password=test dbname=test" > test$DATE$.sql}
+  - {name: db_name, command: pg_dump -a "host=192.168.1.11 port=5433 user=postgres password=test dbname=db_name"}
 
 # 通知邮件
 notice_email:
