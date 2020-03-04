@@ -5,6 +5,6 @@
   # change config
   vi config.yml
   # build docker and run
-  docker build . -t dbback-up
-  docker run -d dbback-up
+  docker build . -t backup-db
+  docker run -d backup-db
   ```
