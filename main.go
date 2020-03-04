@@ -12,6 +12,7 @@ func main() {
 		// server
 		server.Start()
 	} else {
+		// client
 		client.StartBackup()
 	}
 

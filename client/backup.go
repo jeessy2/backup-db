@@ -49,6 +49,6 @@ func backup(cmd entity.Commands) (outFileName string) {
 func sleep() {
 	sleepHours := 24 - time.Now().Hour()
 	log.Println("Run again after", sleepHours, "hours")
-	time.Sleep(time.Hour * time.Duration(sleepHours))
-	// time.Sleep(time.Second * 2)
+	// time.Sleep(time.Hour * time.Duration(sleepHours))
+	time.Sleep(time.Second * 10)
 }

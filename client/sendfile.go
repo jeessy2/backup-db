@@ -31,18 +31,22 @@ func sendFileInner(fileName string, bytes []byte) {
 		log.Println("Connect server error: ", err)
 	} else {
 		defer conn.Close()
-		conn.Write([]byte(fileName))
-		buffer := make([]byte, 1024)
+
+		// send file name
+		util.ConnSendString(conn, fileName)
 
 		// it's ok?
-		okLen, err := conn.Read(buffer)
-		if err != nil {
-			log.Printf("Can't read \"ok\" from server %s, err: %s", serverAddr, err)
+		ok, err := util.ConnReceiveString(conn)
+		if err != nil || "ok" != ok {
 			return
 		}
 
-		ok := string(buffer[:okLen])
-		if ok != "ok" {
+		// send file size
+		util.ConnSendString(conn, strconv.Itoa(len(bytes)))
+
+		// it's ok?
+		ok, err = util.ConnReceiveString(conn)
+		if err != nil || "ok" != ok {
 			return
 		}
 
