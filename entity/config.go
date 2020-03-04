@@ -7,7 +7,16 @@ type Config struct {
 		IP         string
 		ServerPort int `yaml:"server_port"`
 	}
-	MaxSaveDays int      `yaml:"max_save_days"`
-	BackupPath  string   `yaml:"backup_path"`
+	MaxSaveDays int    `yaml:"max_save_days"`
+	BackupPath  string `yaml:"backup_path"`
+	Cmds        []Commands
 	NoticeEmail []string `yaml:"notice_email"`
+}
+
+// Commands 命令实体
+type Commands struct {
+	// 名称
+	Name string
+	// 命令
+	Command  string
 }
