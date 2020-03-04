@@ -37,19 +37,28 @@ func handleConnection(conn net.Conn) {
 	remoteAddr := conn.RemoteAddr().String()
 	log.Println(remoteAddr, "connected success!")
 
-	buffer := make([]byte, 1024)
-	recvLen, err := conn.Read(buffer)
+	// file name
+	outFileName, err := util.ConnReceiveString(conn)
 	if err != nil {
-		log.Println("Read error!", remoteAddr)
-	}
-	outFileName := string(buffer[:recvLen])
-	log.Println("Receive file", outFileName, "from", remoteAddr)
-
-	_, err = conn.Write([]byte("ok"))
-	if err != nil {
-		log.Println("No response ", remoteAddr)
 		return
 	}
+	if !util.ConnSendString(conn, "ok") {
+		return
+	}
+
+	// receive file size
+	fileSizeStr, err := util.ConnReceiveString(conn)
+	if err != nil {
+		return
+	}
+	if !util.ConnSendString(conn, "ok") {
+		return
+	}
+	fileSize, err := strconv.Atoi(fileSizeStr)
+	if err != nil {
+		return
+	}
+	log.Printf("Receive file: %s ,size: %d ,remote: %s\n", outFileName, fileSize, remoteAddr)
 
 	// receive file bytes
 	newFileName := getNewFileName(outFileName)
@@ -62,6 +71,8 @@ func handleConnection(conn net.Conn) {
 
 	defer file.Close()
 
+	totalReceivedLen := 0
+
 	for {
 		buffer := make([]byte, 1024)
 		len, err := conn.Read(buffer)
@@ -70,8 +81,16 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 
+		if totalReceivedLen%(1024*1024*10) == 0 {
+			log.Printf("Receive file: %s, percent: %.2f %%, remote: %s\n",
+				newFileName,
+				100-float64((fileSize-totalReceivedLen))/float64(fileSize)*100,
+				remoteAddr)
+		}
+
 		if len > 0 {
 			writeLen, err := file.Write(buffer[:len])
+			totalReceivedLen += writeLen
 			if err != nil || writeLen != len {
 				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
 				break
