@@ -16,7 +16,7 @@
   -e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=test\"" \
   -e max_save_days=30 \
   -e notice_email=277172506@qq.com \
-  backup-db
+  backup-test
   ```
   
   server
@@ -29,5 +29,5 @@
   -e backup_command= \
   -e max_save_days=30 \
   -e notice_email=277172506@qq.com \
-  backup-db
+  backup-server
   ```
