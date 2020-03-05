@@ -71,7 +71,9 @@ func handleConnection(conn net.Conn) {
 
 	defer file.Close()
 
-	totalReceivedLen := 0
+	currentReceivedLen := 0
+
+	go util.ProgressDisplay("Receive", &currentReceivedLen, fileSize, newFileName, remoteAddr)
 
 	for {
 		buffer := make([]byte, 1024)
@@ -81,16 +83,9 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 
-		if totalReceivedLen%(1024*1024*10) == 0 {
-			log.Printf("Receive file: %s, percent: %.2f %%, remote: %s\n",
-				newFileName,
-				100-float64((fileSize-totalReceivedLen))/float64(fileSize)*100,
-				remoteAddr)
-		}
-
 		if len > 0 {
 			writeLen, err := file.Write(buffer[:len])
-			totalReceivedLen += writeLen
+			currentReceivedLen += writeLen
 			if err != nil || writeLen != len {
 				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
 				break

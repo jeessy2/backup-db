@@ -11,16 +11,16 @@ import (
 // SendFile send file to server
 func SendFile(fileName string) {
 	log.Println("Starting send file to server: ", util.GetConfig().Server.IP, ":", util.GetConfig().Server.ServerPort)
-	bytes, err := ioutil.ReadFile(fileName)
+	fileAllBytes, err := ioutil.ReadFile(fileName)
 	if err == nil {
-		sendFileInner(fileName, bytes)
+		sendFileInner(fileName, fileAllBytes)
 	} else {
 		log.Println("Read file \"", fileName, "\" error: ", err)
 	}
 
 }
 
-func sendFileInner(fileName string, bytes []byte) {
+func sendFileInner(fileName string, fileAllBytes []byte) {
 	serverAddr := util.GetConfig().Server.IP + ":" + strconv.Itoa(util.GetConfig().Server.ServerPort)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverAddr)
 	if err != nil {
@@ -42,7 +42,7 @@ func sendFileInner(fileName string, bytes []byte) {
 		}
 
 		// send file size
-		util.ConnSendString(conn, strconv.Itoa(len(bytes)))
+		util.ConnSendString(conn, strconv.Itoa(len(fileAllBytes)))
 
 		// it's ok?
 		ok, err = util.ConnReceiveString(conn)
@@ -53,15 +53,24 @@ func sendFileInner(fileName string, bytes []byte) {
 		// send file
 		log.Println("send file...")
 
-		bytesLen := len(bytes)
-		for i := 0; i < bytesLen; i++ {
-			if i*1024 > bytesLen {
+		fileSize := len(fileAllBytes)
+
+		currentSendLen := 0
+		go util.ProgressDisplay("Send", &currentSendLen, fileSize, fileName, serverAddr)
+
+		for i := 0; i < fileSize; i++ {
+			firstIndex := i * 1024
+			nextIndex := (i + 1) * 1024
+			if firstIndex > fileSize {
 				break
 			}
-			if (i+1)*1024 > (bytesLen-1) {
-				conn.Write(bytes[i*1024 : bytesLen-1])
+			if nextIndex >= fileSize {
+				// can't over
+				conn.Write(fileAllBytes[firstIndex:fileSize])
+				currentSendLen = fileSize
 			} else {
-				conn.Write(bytes[i*1024 : (i+1)*1024])
+				conn.Write(fileAllBytes[firstIndex:nextIndex])
+				currentSendLen = nextIndex
 			}
 		}
 
