@@ -1,12 +1,13 @@
 # backup databases
-  Only support postgres right now
+  ## Support all databases and the database images can be find in docker
+  ### build docker images
 
   ```
   # build docker and run
   docker build . -t backup-db
   docker run -d backup-db
   ```
-  client
+  ### client
   ```
   docker run -d \
   --name backup-test \
@@ -19,7 +20,7 @@
   backup-test
   ```
   
-  server
+  ### server
   ```
   docker run -d \
   --name backup-server \
