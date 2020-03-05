@@ -73,13 +73,21 @@ func handleConnection(conn net.Conn) {
 
 	currentReceivedLen := 0
 
-	go util.ProgressDisplay("Receive", &currentReceivedLen, fileSize, newFileName, remoteAddr)
+	progress := util.Progress{
+		CurrentReceivedLen: &currentReceivedLen,
+		ReceiveOrSend:      "Receive",
+		FileSize:           fileSize,
+		FileName:           newFileName,
+		RemoteAddr:         remoteAddr,
+	}
+	go util.ProgressDisplay(&progress)
 
 	for {
 		buffer := make([]byte, 1024)
 		len, err := conn.Read(buffer)
 		if err != nil {
 			log.Printf("Read from %s : %s , error: %s\n", remoteAddr, newFileName, err)
+			progress.StopDisplay = true
 			break
 		}
 
@@ -88,11 +96,13 @@ func handleConnection(conn net.Conn) {
 			currentReceivedLen += writeLen
 			if err != nil || writeLen != len {
 				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
+				progress.StopDisplay = true
 				break
 			}
 			// equals, received file success
 			if currentReceivedLen == fileSize {
 				log.Printf("Write file success %s : %s\n", remoteAddr, newFileName)
+				progress.StopDisplay = true
 				break
 			}
 		} else {
