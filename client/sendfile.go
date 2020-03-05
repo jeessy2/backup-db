@@ -54,26 +54,36 @@ func sendFileInner(fileName string, fileAllBytes []byte) {
 		fileSize := len(fileAllBytes)
 
 		currentSendLen := 0
-		go util.ProgressDisplay("Send", &currentSendLen, fileSize, fileName, serverAddr)
+		progress := util.Progress{
+			CurrentReceivedLen: &currentSendLen,
+			ReceiveOrSend:      "Send",
+			FileSize:           fileSize,
+			FileName:           fileName,
+			RemoteAddr:         serverAddr,
+		}
+		go util.ProgressDisplay(&progress)
 
 		for i := 0; i < fileSize; i++ {
 			firstIndex := i * 1024
 			nextIndex := (i + 1) * 1024
 			if firstIndex > fileSize {
+				progress.StopDisplay = true
 				break
 			}
 			if nextIndex >= fileSize {
 				// can't over
 				len, err := conn.Write(fileAllBytes[firstIndex:fileSize])
-				if err != nil || len != fileSize - firstIndex{
+				if err != nil || len != fileSize-firstIndex {
 					log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
+					progress.StopDisplay = true
 					break
 				}
 				currentSendLen = fileSize
 			} else {
 				len, err := conn.Write(fileAllBytes[firstIndex:nextIndex])
-				if err != nil || len != nextIndex - firstIndex{
+				if err != nil || len != nextIndex-firstIndex {
 					log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
+					progress.StopDisplay = true
 					break
 				}
 				currentSendLen = nextIndex
