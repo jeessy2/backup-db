@@ -51,8 +51,6 @@ func sendFileInner(fileName string, fileAllBytes []byte) {
 		}
 
 		// send file
-		log.Println("send file...")
-
 		fileSize := len(fileAllBytes)
 
 		currentSendLen := 0
@@ -66,10 +64,18 @@ func sendFileInner(fileName string, fileAllBytes []byte) {
 			}
 			if nextIndex >= fileSize {
 				// can't over
-				conn.Write(fileAllBytes[firstIndex:fileSize])
+				len, err := conn.Write(fileAllBytes[firstIndex:fileSize])
+				if err != nil || len != fileSize - firstIndex{
+					log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
+					break
+				}
 				currentSendLen = fileSize
 			} else {
-				conn.Write(fileAllBytes[firstIndex:nextIndex])
+				len, err := conn.Write(fileAllBytes[firstIndex:nextIndex])
+				if err != nil || len != nextIndex - firstIndex{
+					log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
+					break
+				}
 				currentSendLen = nextIndex
 			}
 		}

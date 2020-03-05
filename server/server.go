@@ -90,8 +90,8 @@ func handleConnection(conn net.Conn) {
 				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
 				break
 			}
-			// less 1024, it's end of file
-			if len < 1024 {
+			// equals, received file success
+			if currentReceivedLen == fileSize {
 				log.Printf("Write file success %s : %s\n", remoteAddr, newFileName)
 				break
 			}
