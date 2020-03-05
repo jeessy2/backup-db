@@ -1,7 +1,6 @@
 package client
 
 import (
-	"backup-db/entity"
 	"backup-db/util"
 	"log"
 	"os"
@@ -12,27 +11,27 @@ import (
 // StartBackup start backup db
 func StartBackup() {
 	for {
-		for _, cmd := range util.GetConfig().Cmds {
-			// backup
-			outFileName := backup(cmd)
-			// send file to server
-			SendFile(outFileName)
-			// sleep to tomorrow night
-			sleep()
-		}
+		// backup
+		outFileName := backup()
+		// send file to server
+		SendFile(outFileName)
+		// sleep to tomorrow night
+		sleep()
 	}
 }
 
-func backup(cmd entity.Commands) (outFileName string) {
-	log.Println("Starting backup:", cmd.Name)
+func backup() (outFileName string) {
+	projectName := util.GetConfig().ProjectName
+	command := util.GetConfig().Command
+	log.Println("Starting backup:", projectName)
 
 	// create shell file
-	shellName := cmd.Name + "backup.sh"
-	outFileName = cmd.Name + "/" + cmd.Name + time.Now().Format("2006-01-02") + ".sql"
+	shellName := projectName + "backup.sh"
+	outFileName = projectName + "/" + projectName + time.Now().Format("2006-01-02") + ".sql"
 	file, err := os.Create(shellName)
 	file.Chmod(0700)
 	if err == nil {
-		file.WriteString(cmd.Command + " > " + outFileName)
+		file.WriteString(command + " > " + outFileName)
 		file.Close()
 	}
 
@@ -41,7 +40,7 @@ func backup(cmd entity.Commands) (outFileName string) {
 	shell.Stderr = os.Stderr
 	shell.Stdout = os.Stdout
 	shell.Run()
-	log.Println(cmd.Name, "Complete backup!")
+	log.Println(projectName, "Complete backup!")
 
 	return
 }

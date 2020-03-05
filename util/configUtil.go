@@ -2,11 +2,9 @@ package util
 
 import (
 	"backup-db/entity"
-	"io/ioutil"
 	"log"
 	"os"
-
-	"gopkg.in/yaml.v2"
+	"strconv"
 )
 
 // 缓存已经读取到的配置
@@ -28,35 +26,32 @@ func GetConfig() *entity.Config {
 	panic(err)
 }
 
-// GetConfig 获得配置文件
 func getConfigInner(workDir string) (*entity.Config, error) {
-	configPath := workDir + string(os.PathSeparator) + "config.yml"
-	_, err := os.Stat(configPath)
+	config := entity.Config{}
+	config.Server.IP = os.Getenv("backup_server_ip")
 
-	if err == nil {
-		// 找到配置文件
-		configFile, err := os.Open(configPath)
-		if err != nil {
-			log.Fatal("打开配件文件失败")
-			return nil, err
-		}
-
-		config := entity.Config{}
-		b, err := ioutil.ReadAll(configFile)
-		if err != nil {
-			log.Fatal("读取配件文件失败")
-			return nil, err
-		}
-
-		err = yaml.Unmarshal(b, &config)
-		if err != nil {
-			log.Fatal("读取config.yml配件文件失败, 注意冒号后面必须跟一个空格。\n", err)
-			return nil, err
-		}
-		cachedConfig = &config
-		return cachedConfig, nil
+	serverPort, err := strconv.Atoi(os.Getenv("backup_server_port"))
+	if err != nil {
+		serverPort = 9977
+		log.Println("backup_server_port default: ", serverPort)
 	}
+	config.Server.ServerPort = serverPort
 
-	log.Fatal(err)
-	return nil, err
+	config.ProjectName = os.Getenv("backup_project_name")
+	config.Command = os.Getenv("backup_command")
+
+	maxSaveDays, err := strconv.Atoi(os.Getenv("max_save_days"))
+	if err != nil {
+		maxSaveDays = 3
+		log.Println("max_save_days default: ", maxSaveDays)
+	}
+	if maxSaveDays < 3 {
+		maxSaveDays = 3
+	}
+	config.MaxSaveDays = maxSaveDays
+
+	config.NoticeEmail = os.Getenv("notice_email")
+
+	return &config, nil
+
 }

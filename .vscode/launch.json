@@ -10,7 +10,14 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "env": {},
+            "env": {
+                "backup_server_ip": "192.168.1.76",
+                "backup_server_port": "9977",
+                "backup_project_name": "test",
+                "backup_command": "pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=test dbname=db_name\"",
+                "max_save_days": "30",
+                "notice_email": "277172506@qq.com"
+            },
             "args": []
         },
         {
@@ -19,7 +26,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "env": {},
+            "env": {
+                // set empty when run as server
+                "backup_server_ip": "",
+                "backup_server_port": "9977",
+                "max_save_days": "30",
+                "notice_email": "277172506@qq.com"
+            },
             "args": []
         }
     ]
