@@ -28,6 +28,8 @@ func backup() (outFileName string) {
 	// create shell file
 	shellName := projectName + "backup.sh"
 	outFileName = projectName + "/" + projectName + time.Now().Format("2006-01-02") + ".sql"
+	// create floder
+	os.Mkdir(projectName, 0700)
 	file, err := os.Create(shellName)
 	file.Chmod(0700)
 	if err == nil {
