@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch-client",
+            "name": "client",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -21,7 +21,7 @@
             "args": []
         },
         {
-            "name": "Launch-server",
+            "name": "server",
             "type": "go",
             "request": "launch",
             "mode": "auto",
