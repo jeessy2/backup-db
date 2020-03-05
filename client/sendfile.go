@@ -52,7 +52,18 @@ func sendFileInner(fileName string, bytes []byte) {
 
 		// send file
 		log.Println("send file...")
-		conn.Write(bytes)
+
+		bytesLen := len(bytes)
+		for i := 0; i < bytesLen; i++ {
+			if i*1024 > bytesLen {
+				break
+			}
+			if (i+1)*1024 > (bytesLen-1) {
+				conn.Write(bytes[i*1024 : bytesLen-1])
+			} else {
+				conn.Write(bytes[i*1024 : (i+1)*1024])
+			}
+		}
 
 	}
 
