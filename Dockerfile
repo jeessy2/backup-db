@@ -1,20 +1,17 @@
-
 # build stage
-FROM golang:alpine AS builder
+FROM golang AS builder
 WORKDIR /app
 COPY . .
-RUN echo "https://mirrors.ustc.edu.cn/alpine/v3.3/main" > /etc/apk/repositories \
-    && echo "https://mirrors.ustc.edu.cn/alpine/v3.3/community" >> /etc/apk/repositories \
-    # && apk update \
-    # && go get -d -v . \
-    # && go install -v . \
+RUN go get -d -v . \
+    && go install -v . \
     && go build -v .
 
 # final stage
+# you can replace "postgres" to other images, emample: "mysql"
 FROM postgres
 WORKDIR /app
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
-COPY --from=builder /app /app
+COPY --from=builder /app/backup-db /app/backup-db
 ENTRYPOINT /app/backup-db
 LABEL Name=backup-db Version=0.0.1

@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const parentSavePath = "backup-files"
+
 // StartBackup start backup db
 func StartBackup() {
 	for {
@@ -27,11 +29,13 @@ func backup() (outFileName string) {
 
 	// create shell file
 	shellName := projectName + "backup.sh"
-	outFileName = projectName + "/" + projectName + time.Now().Format("2006-01-02") + ".sql"
 	// create floder
-	os.Mkdir(projectName, 0700)
+	os.MkdirAll(parentSavePath+"/"+projectName, 0755)
+
+	outFileName = parentSavePath + "/" + projectName + "/" + projectName + time.Now().Format("2006-01-02") + ".sql"
+
 	file, err := os.Create(shellName)
-	file.Chmod(0700)
+	file.Chmod(744)
 	if err == nil {
 		file.WriteString(command + " > " + outFileName)
 		file.Close()
