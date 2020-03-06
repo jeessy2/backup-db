@@ -25,7 +25,7 @@ func PathExists(path string) bool {
 // DeleteOlderBackup delete older backup
 func DeleteOlderBackup() {
 	// sleep 30 minutes
-	time.Sleep(1 * time.Minute)
+	time.Sleep(30 * time.Minute)
 	for {
 		// get all projects
 		projects, err := ioutil.ReadDir(parentSavePath)
