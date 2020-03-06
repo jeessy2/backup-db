@@ -14,15 +14,17 @@ const parentSavePath = "backup-files"
 func StartBackup() {
 	for {
 		// backup
-		outFileName := backup()
-		// send file to server
-		SendFile(outFileName)
+		outFileName, err := backup()
+		if err == nil {
+			// send file to server
+			SendFile(outFileName)
+		}
 		// sleep to tomorrow night
 		sleep()
 	}
 }
 
-func backup() (outFileName string) {
+func backup() (outFileName string, err error) {
 	projectName := util.GetConfig().ProjectName
 	command := util.GetConfig().Command
 	log.Println("Starting backup:", projectName)
@@ -39,6 +41,8 @@ func backup() (outFileName string) {
 	if err == nil {
 		file.WriteString(command + " > " + outFileName)
 		file.Close()
+	} else {
+		log.Println("Create file with error: ", err)
 	}
 
 	// run shell file
@@ -46,7 +50,15 @@ func backup() (outFileName string) {
 	shell.Stderr = os.Stderr
 	shell.Stdout = os.Stdout
 	shell.Run()
-	log.Println(projectName, "Complete backup!")
+
+	fileInfo, err := os.Stat(outFileName)
+	if err != nil {
+		log.Println("Backup failed:", projectName)
+	} else if fileInfo.Size() >= 100 {
+		log.Println("Success backup:", projectName)
+	} else {
+		log.Println("Backup file size less than 100 bytes")
+	}
 
 	return
 }
