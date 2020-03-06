@@ -5,12 +5,12 @@ package entity
 type Config struct {
 	Server struct {
 		IP         string
-		ServerPort int `yaml:"server_port"`
+		ServerPort int
 	}
 	ProjectName string
 	// 命令
 	Command     string
-	MaxSaveDays int    `yaml:"max_save_days"`
-	BackupPath  string `yaml:"backup_path"`
+	MaxSaveDays int
+	BackupPath  string
 	NoticeEmail string
 }

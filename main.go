@@ -8,6 +8,9 @@ import (
 
 func main() {
 
+	// delete older backups
+	go util.DeleteOlderBackup()
+
 	if util.GetConfig().Server.IP == "" {
 		// server
 		server.Start()
