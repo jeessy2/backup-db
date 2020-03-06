@@ -1,9 +1,9 @@
 # backup databases
   Support all databases and the database images can be find in docker.
-  [X] Support for custom backup command.
-  [X] The older files will be delete auto.
-  [X] Can backup to another server.
-  [ ] Email support.
+  - [X] Support for custom backup command.
+  - [X] The older files will be delete auto.
+  - [X] Can backup to another server.
+  - [ ] Email support.
   ### build docker images
 
   ```
