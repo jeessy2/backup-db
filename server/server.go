@@ -65,7 +65,7 @@ func handleConnection(conn net.Conn) {
 	newFileName := getNewFileName(outFileName)
 
 	// Creating parent dir
-	os.MkdirAll(newFileName[0 : strings.LastIndex(newFileName, "/")], 0755)
+	os.MkdirAll(newFileName[0:strings.LastIndex(newFileName, "/")], 0755)
 	file, err := os.Create(newFileName)
 	if err != nil {
 		log.Printf("Can't create file %s , error: %s\n", newFileName, err)

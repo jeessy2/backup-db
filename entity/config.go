@@ -13,4 +13,10 @@ type Config struct {
 	MaxSaveDays int
 	BackupPath  string
 	NoticeEmail string
+	SMTPConfig struct {
+		Host string
+		Port int
+		Username string
+		Password string
+	}
 }

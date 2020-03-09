@@ -18,6 +18,9 @@ func StartBackup() {
 		if err == nil {
 			// send file to server
 			SendFile(outFileName)
+		} else {
+			// send email
+			util.SendEmail("Backup " + util.GetConfig().ProjectName + " failed!", err.Error())
 		}
 		// sleep to tomorrow night
 		sleep()
