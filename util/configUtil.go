@@ -51,6 +51,15 @@ func getConfigInner(workDir string) (*entity.Config, error) {
 	config.MaxSaveDays = maxSaveDays
 
 	config.NoticeEmail = os.Getenv("notice_email")
+	config.SMTPConfig.Host = os.Getenv("smtp_host")
+	port, err := strconv.Atoi(os.Getenv("smtp_port"))
+	if err != nil {
+		port = 587
+		log.Println("smtp_port default: ", port)
+	}
+	config.SMTPConfig.Port = port
+	config.SMTPConfig.Username = os.Getenv("smtp_username")
+	config.SMTPConfig.Password = os.Getenv("smtp_password")
 
 	return &config, nil
 

@@ -1,2 +1,3 @@
 *.exe*
 __debug_bin
+.idea

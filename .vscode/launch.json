@@ -16,7 +16,11 @@
                 "backup_project_name": "test",
                 "backup_command": "pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=test dbname=db_name\"",
                 "max_save_days": "30",
-                "notice_email": "277172506@qq.com"
+                "notice_email": "277172506@qq.com",
+                "smtp_host": "smtp.office365.com",
+                "smtp_port": "587",
+                "smtp_username": "backup-db-docker@outlook.com",
+                "smtp_password": "kLhHbTC6Ak5B2hw"
             },
             "args": []
         },
@@ -31,7 +35,11 @@
                 "backup_server_ip": "",
                 "backup_server_port": "9977",
                 "max_save_days": "30",
-                "notice_email": "277172506@qq.com"
+                "notice_email": "277172506@qq.com",
+                "smtp_host": "smtp.office365.com",
+                "smtp_port": "587",
+                "smtp_username": "backup-db-docker@outlook.com",
+                "smtp_password": "kLhHbTC6Ak5B2hw"
             },
             "args": []
         }
