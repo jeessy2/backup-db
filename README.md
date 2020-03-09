@@ -5,6 +5,13 @@
   - [X] You can copy the backup files to another server.
   - [x] Send email when backup failed.
 
+# 数据库备份工具
+  原理：就是在原生的docker镜像基础上，加入一备份工具，增强备份功能。
+  - [X] 支持的数据库需有docker镜像。如postgres, mysql
+  - [X] 支持自定义命令
+  - [X] 可以把备份后的文件存入另一台服务器
+  - [X] 备份失败邮件通知
+
 ## build docker images (You may not need to build docker images, if you use postgres)
 ```
   # build docker and run
