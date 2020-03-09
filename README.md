@@ -4,15 +4,16 @@
   - [X] Obsolete files will be deleted automatically.
   - [X] You can copy the backup files to another server.
   - [x] Send email when backup failed.
-  ### build docker images
 
-  ```
+## build docker images (You may not need to build docker images, if you use postgres)
+```
   # build docker and run
-  docker build . -t backup-db
-  docker run -d backup-db
-  ```
-  ### client
-  ```
+  docker build . -t jeessy/backup-db
+  docker run -d jeessy/backup-db
+```
+
+## client
+```
   docker run -d \
   --name backup-test \
   -v /opt/backup-files-test:/app/backup-files \
@@ -26,11 +27,11 @@
   -e smtp_port=587 \
   -e smtp_username=backup-db-docker@outlook.com \
   -e smtp_password=kLhHbTC6Ak5B2hw \
-  backup-db
-  ```
+  jeessy/backup-db
+```
   
-  ### server
-  ```
+## server
+```
   docker run -d \
   --name backup-server \
   -p 9977:9977 \
@@ -42,5 +43,5 @@
   -e smtp_port=587 \
   -e smtp_username=backup-db-docker@outlook.com \
   -e smtp_password=kLhHbTC6Ak5B2hw \
-  backup-db
-  ```
+  jeessy/backup-db
+```
