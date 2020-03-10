@@ -5,6 +5,7 @@
   - [X] You can copy the backup files to another server.
   - [x] Send email when backup failed.
   - [x] Automatic backup in every night.
+  - [x] The maximum number of days to save backup files can be set (at least 3 days).
 
 # 数据库备份工具
   原理：在原生的docker镜像基础上，加入一备份工具，增强备份功能。
@@ -13,6 +14,7 @@
   - [X] 可以把备份后的文件存入另一台服务器
   - [X] 备份失败邮件通知
   - [X] 每日凌晨自动备份
+  - [X] 可设置备份文件最大保存天数(最少3天)
 
 ## build docker images (You may not need to build docker images, if you use postgres)
 ```
