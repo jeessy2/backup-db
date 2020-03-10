@@ -32,8 +32,8 @@ func sendFileInner(fileName string, fileAllBytes []byte) {
 	} else {
 		defer conn.Close()
 
-		// send file name
-		util.ConnSendString(conn, fileName)
+		// send file name, should add ProjectName
+		util.ConnSendString(conn, util.GetConfig().ProjectName + "/" + fileName)
 
 		// it's ok?
 		ok, err := util.ConnReceiveString(conn)
