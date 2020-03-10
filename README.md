@@ -32,7 +32,7 @@ docker run -d \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
 -e backup_project_name=test \
--e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=test\"" \
+-e backup_command=pg_dump -a "host=192.168.1.11 port=5433 user=postgres password=password dbname=test" > ${DATE}.sql \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
