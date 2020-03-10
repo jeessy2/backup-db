@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -22,10 +23,10 @@ func StartBackup() {
 			outFileName, err := backup()
 			if err == nil {
 				// send file to server
-				SendFile(outFileName)
+				SendFile(outFileName.Name())
 			} else {
 				// send email
-				util.SendEmail("Backup "+util.GetConfig().ProjectName+" failed!", err.Error())
+				util.SendEmail("The \""+util.GetConfig().ProjectName+"\" is backup failed!", err.Error())
 			}
 			// sleep to tomorrow night
 			sleep()
@@ -51,12 +52,12 @@ func prepare() (err error) {
 	return
 }
 
-func backup() (outFileName string, err error) {
+func backup() (outFileName os.FileInfo, err error) {
 	projectName := util.GetConfig().ProjectName
 	log.Println("Starting backup:", projectName)
 
-	dateString := time.Now().Format("2006-01-02")
-	shellString := strings.ReplaceAll(util.GetConfig().Command, "${DATE}", dateString)
+	todayString := time.Now().Format("2006-01-02")
+	shellString := strings.ReplaceAll(util.GetConfig().Command, "${DATE}", todayString)
 
 	// create shell file
 	shellName := time.Now().Format("2006_01_02_") + "backup.sh"
@@ -76,25 +77,29 @@ func backup() (outFileName string, err error) {
 	shell.Stdout = os.Stdout
 	shell.Run()
 
-	fileInfo, err := os.Stat(outFileName)
+	// find backup file by todayString
+	outFileName, err = findBackupFile(todayString)
+
+	// check file size
 	if err != nil {
-		log.Println("Backup failed:", projectName)
-	} else if fileInfo.Size() >= 1000 {
-		log.Println("Success backup:", projectName)
+		log.Println(err)
+	} else if outFileName.Size() >= 100 {
+		log.Printf("Success backup: %s, file: %s", projectName, outFileName.Name())
 	} else {
-		log.Println("Backup file size less than 1000 bytes")
-		err = errors.New("Backup file size less than 1000 bytes! ")
+		err = errors.New("The \"" + projectName + "\" backup file size less than 100 bytes, Current size is " + strconv.Itoa(int(outFileName.Size())))
+		log.Println(err)
 	}
 
 	return
 }
 
 // find backup file by todayString
-func findBackupFile(todayString string) (backupFile string, err error) {
+func findBackupFile(todayString string) (backupFile os.FileInfo, err error) {
 	files, err := ioutil.ReadDir(".")
 	for _, file := range files {
 		if strings.Contains(file.Name(), todayString) {
-			backupFile = file.Name()
+			backupFile = file
+			return
 		}
 	}
 	err = errors.New("Can't find the backup file which containes " + todayString)
