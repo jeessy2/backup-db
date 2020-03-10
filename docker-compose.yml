@@ -3,4 +3,5 @@ version: '2.0'
 services:
   backup-db:
     image: jeessy/backup-db
+    restart: always
     build: .
