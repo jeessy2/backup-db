@@ -23,6 +23,7 @@
 ```
   docker run -d \
   --name backup-test \
+  --restart=always \
   -v /opt/backup-files-test:/app/backup-files \
   -e backup_server_ip=192.168.1.76 \
   -e backup_server_port=9977 \
@@ -36,11 +37,12 @@
   -e smtp_password=kLhHbTC6Ak5B2hw \
   jeessy/backup-db
 ```
-  
+
 ## server
 ```
   docker run -d \
   --name backup-server \
+  --restart=always
   -p 9977:9977 \
   -v /opt/backup-files:/app/backup-files \
   -e backup_server_port=9977 \
