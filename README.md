@@ -1,3 +1,13 @@
+# 数据库备份工具
+  原理：在原生的docker镜像基础上，加入一备份工具，增强备份功能。
+  提供postgres, mysql5镜像，可直接使用，如有需要请提issues。
+  - [X] 可以自行构建docker镜像，支持不同的数据库及不同的版本，如mysql8, oracle, sqlserver2017+等等
+  - [X] 支持自定义命令
+  - [X] 可以把备份后的文件存入另一台服务器
+  - [X] 备份失败邮件通知
+  - [X] 每日凌晨自动备份
+  - [X] 可设置备份文件最大保存天数(最少3天)
+
 # backup databases
   Support all databases and the database images can be find in docker.
   - [X] Support for custom backup commands.
@@ -7,14 +17,13 @@
   - [x] Automatic backup in every night.
   - [x] The maximum number of days to save backup files can be set (at least 3 days).
 
-# 数据库备份工具
-  原理：在原生的docker镜像基础上，加入一备份工具，增强备份功能。
-  - [X] 支持的数据库需有docker镜像。如postgres, mysql
-  - [X] 支持自定义命令
-  - [X] 可以把备份后的文件存入另一台服务器
-  - [X] 备份失败邮件通知
-  - [X] 每日凌晨自动备份
-  - [X] 可设置备份文件最大保存天数(最少3天)
+## docker 环境变量说明
+```
+backup_server_ip 不填默认为二次备份的服务器
+backup_server_port 二次备份服务器的端口
+max_save_days 备份文件最大保存天数
+notice_email 异常通知的邮箱
+```
 
 ## server
 ```
