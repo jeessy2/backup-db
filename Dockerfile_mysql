@@ -7,11 +7,11 @@ RUN go get -d -v . \
     && go build -v .
 
 # final stage
-# you can replace "postgres" to other images, emample: "mysql"
-FROM postgres
+# you can replace "postgres" to other images, emample: "mysql:5"
+FROM mysql:5
 WORKDIR /app
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 COPY --from=builder /app/backup-db /app/backup-db
-ENTRYPOINT /app/backup-db
-LABEL Name=backup-db-postgres Version=0.0.2
+ENTRYPOINT /app/backup-db55
+LABEL Name=backup-db-mysql5 Version=0.0.2

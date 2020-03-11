@@ -16,14 +16,24 @@
   - [X] 每日凌晨自动备份
   - [X] 可设置备份文件最大保存天数(最少3天)
 
-## build docker images (You may not need to build docker images, if you use postgres)
+## server
 ```
-# build docker and run
-docker build . -t jeessy/backup-db
-docker run -d jeessy/backup-db
+docker run -d \
+--name backup-server \
+--restart=always
+-p 9977:9977 \
+-v /opt/backup-files:/app/backup-files \
+-e backup_server_port=9977 \
+-e max_save_days=30 \
+-e notice_email=277172506@qq.com \
+-e smtp_host=smtp.office365.com \
+-e smtp_port=587 \
+-e smtp_username=backup-db-docker@outlook.com \
+-e smtp_password=kLhHbTC6Ak5B2hw \
+jeessy/backup-db:postgres-0.0.2
 ```
 
-## client
+## client (postgress)
 ```
 docker run -d \
 --name backup-db_name \
@@ -39,22 +49,32 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db-postgres
+jeessy/backup-db:postgres-0.0.2
 ```
 
-## server
+## client (mysql5)
 ```
 docker run -d \
---name backup-server \
---restart=always
--p 9977:9977 \
+--name backup-db_name \
+--restart=always \
 -v /opt/backup-files:/app/backup-files \
+-e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
+-e backup_project_name=db_name \
+-e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db_name > #{DATE}.sql" \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db-postgres
+jeessy/backup-db:mysql57-0.0.2
+```
+
+## build docker images (You may not need to build docker images, if you use postgres or mysql5)
+```
+# first git clone
+# change Dockerfile
+# build docker images
+docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.2
 ```
