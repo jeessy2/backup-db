@@ -4,11 +4,15 @@ import (
 	"backup-db/util"
 	"io/ioutil"
 	"log"
+	"time"
 )
 
 // DeleteOlderBackup for client
 func DeleteOlderBackup() {
+	// sleep 30 minutes
+	time.Sleep(30 * time.Minute)
 	for {
+		log.Println("Start deleting old backup files")
 		// read from current path
 		backupFiles, err := ioutil.ReadDir(".")
 		if err != nil {

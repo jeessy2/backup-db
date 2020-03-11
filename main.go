@@ -9,15 +9,15 @@ import (
 func main() {
 
 	if util.GetConfig().Server.IP == "" {
+		// delete old backup
+		go server.DeleteOldBackup()
 		// server
 		server.Start()
-		// delete older backup
-		go server.DeleteOlderBackup()
 	} else {
+		// delete old backup
+		go client.DeleteOlderBackup()
 		// client
 		client.StartBackup()
-		// delete older backup
-		go client.DeleteOlderBackup()
 	}
 
 }
