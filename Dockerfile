@@ -2,12 +2,14 @@
 FROM golang AS builder
 WORKDIR /app
 COPY . .
-RUN go get -d -v . \
+RUN go env -w GO111MODULE=on \
+    && go env -w GOPROXY=https://goproxy.cn,direct \
+    && go get -d -v . \
     && go install -v . \
     && go build -v .
 
 # final stage
-# you can replace "postgres" to other images, emample: "mysql"
+# you can replace "postgres" to other images, emample: "mysql:5"
 FROM postgres
 WORKDIR /app
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

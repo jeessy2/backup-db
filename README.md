@@ -45,13 +45,13 @@ jeessy/backup-db:postgres-0.0.2
 ## client (postgress)
 ```
 docker run -d \
---name backup-db_name \
+--name backup-db-name \
 --restart=always \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
--e backup_project_name=db_name \
--e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db_name\" > #{DATE}.sql" \
+-e backup_project_name=db-name \
+-e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db-name\" > #{DATE}.sql" \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
@@ -64,20 +64,20 @@ jeessy/backup-db:postgres-0.0.2
 ## client (mysql5)
 ```
 docker run -d \
---name backup-db_name \
+--name backup-db-name \
 --restart=always \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
--e backup_project_name=db_name \
--e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db_name > #{DATE}.sql" \
+-e backup_project_name=db-name \
+-e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql" \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:mysql57-0.0.2
+jeessy/backup-db:mysql5-0.0.2
 ```
 
 ## build docker images (You may not need to build docker images, if you use postgres or mysql5)
@@ -86,4 +86,5 @@ jeessy/backup-db:mysql57-0.0.2
 # change Dockerfile
 # build docker images
 docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.2
+docker build . -f Dockerfile -t jeessy/backup-db:postgres-0.0.2
 ```
