@@ -21,6 +21,8 @@
 ```
 backup_server_ip 不填默认为二次备份的服务器
 backup_server_port 二次备份服务器的端口
+backup_project_name 项目名称，一般就是数据库名称。
+backup_command 备份命令，必须包含#{DATE}
 max_save_days 备份文件最大保存天数
 notice_email 异常通知的邮箱
 ```
