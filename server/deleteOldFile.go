@@ -5,11 +5,15 @@ import (
 	"backup-db/util"
 	"io/ioutil"
 	"log"
+	"time"
 )
 
 // DeleteOlderBackup for server
-func DeleteOlderBackup() {
+func DeleteOldBackup() {
+	// sleep 30 minutes
+	time.Sleep(30 * time.Minute)
 	for {
+		log.Println("Start deleting old backup files")
 		// get all projects
 		projects, err := ioutil.ReadDir(client.ParentSavePath)
 		if err != nil {
