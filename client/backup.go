@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const parentSavePath = "backup-files"
+const ParentSavePath = "backup-files"
 
 // StartBackup start backup db
 func StartBackup() {
@@ -40,7 +40,7 @@ func StartBackup() {
 
 // prepare
 func prepare() (err error) {
-	projectPath := parentSavePath + "/" + util.GetConfig().ProjectName
+	projectPath := ParentSavePath + "/" + util.GetConfig().ProjectName
 	// create floder
 	os.MkdirAll(projectPath, 0755)
 	os.Chdir(projectPath)

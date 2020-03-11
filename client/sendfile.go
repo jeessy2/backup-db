@@ -33,7 +33,7 @@ func sendFileInner(fileName string, fileAllBytes []byte) {
 		defer conn.Close()
 
 		// send file name, should add parentSavePath + ProjectName
-		util.ConnSendString(conn, parentSavePath+"/"+util.GetConfig().ProjectName+"/"+fileName)
+		util.ConnSendString(conn, ParentSavePath+"/"+util.GetConfig().ProjectName+"/"+fileName)
 
 		// it's ok?
 		ok, err := util.ConnReceiveString(conn)
