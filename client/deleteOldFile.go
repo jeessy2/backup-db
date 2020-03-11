@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// DeleteOlderBackup for client
-func DeleteOlderBackup() {
+// DeleteOldBackup for client
+func DeleteOldBackup() {
 	// sleep 30 minutes
 	time.Sleep(30 * time.Minute)
 	for {
