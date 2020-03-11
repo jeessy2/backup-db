@@ -75,19 +75,23 @@ func backup() (outFileName os.FileInfo, err error) {
 	shell := exec.Command("bash", shellName)
 	shell.Stderr = os.Stderr
 	shell.Stdout = os.Stdout
-	shell.Run()
+	err = shell.Run()
+	// execute shell success
+	if err == nil {
+		// find backup file by todayString
+		outFileName, err = findBackupFile(todayString)
 
-	// find backup file by todayString
-	outFileName, err = findBackupFile(todayString)
-
-	// check file size
-	if err != nil {
-		log.Println(err)
-	} else if outFileName.Size() >= 100 {
-		log.Printf("Success backup: %s, file: %s", projectName, outFileName.Name())
+		// check file size
+		if err != nil {
+			log.Println(err)
+		} else if outFileName.Size() >= 100 {
+			log.Printf("Success backup: %s, file: %s", projectName, outFileName.Name())
+		} else {
+			err = errors.New("The \"" + projectName + "\" backup file size less than 100 bytes, Current size is " + strconv.Itoa(int(outFileName.Size())))
+			log.Println(err)
+		}
 	} else {
-		err = errors.New("The \"" + projectName + "\" backup file size less than 100 bytes, Current size is " + strconv.Itoa(int(outFileName.Size())))
-		log.Println(err)
+		log.Println("Execute shell with error:", err)
 	}
 
 	return
