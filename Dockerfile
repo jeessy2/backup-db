@@ -14,4 +14,4 @@ RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 COPY --from=builder /app/backup-db /app/backup-db
 ENTRYPOINT /app/backup-db
-LABEL Name=backup-db Version=0.0.1
+LABEL Name=backup-db Version=0.0.2

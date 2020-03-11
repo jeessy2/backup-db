@@ -26,20 +26,20 @@ docker run -d jeessy/backup-db
 ## client
 ```
 docker run -d \
---name backup-test \
+--name backup-db_name \
 --restart=always \
--v /opt/backup-files-test:/app/backup-files \
+-v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
--e backup_project_name=test \
--e backup_command=pg_dump -a "host=192.168.1.11 port=5433 user=postgres password=password dbname=test" > ${DATE}.sql \
+-e backup_project_name=db_name \
+-e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db_name\" > #{DATE}.sql" \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db
+jeessy/backup-db-postgres
 ```
 
 ## server
@@ -56,5 +56,5 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db
+jeessy/backup-db-postgres
 ```

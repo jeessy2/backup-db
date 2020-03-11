@@ -45,8 +45,8 @@ func prepare() (err error) {
 	os.MkdirAll(projectPath, 0755)
 	os.Chdir(projectPath)
 
-	if !strings.Contains(util.GetConfig().Command, "${DATE}") {
-		err = errors.New("backup_command must contains ${DATE}")
+	if !strings.Contains(util.GetConfig().Command, "#{DATE}") {
+		err = errors.New("backup_command must contains #{DATE}")
 	}
 
 	return
@@ -57,7 +57,7 @@ func backup() (outFileName os.FileInfo, err error) {
 	log.Println("Starting backup:", projectName)
 
 	todayString := time.Now().Format("2006-01-02")
-	shellString := strings.ReplaceAll(util.GetConfig().Command, "${DATE}", todayString)
+	shellString := strings.ReplaceAll(util.GetConfig().Command, "#{DATE}", todayString)
 
 	// create shell file
 	shellName := time.Now().Format("2006_01_02_") + "backup.sh"
