@@ -11,12 +11,12 @@ func main() {
 	if util.GetConfig().Server.IP == "" {
 		// delete old backup
 		go server.DeleteOldBackup()
-		// server
+		// start server
 		server.Start()
 	} else {
 		// delete old backup
-		go client.DeleteOlderBackup()
-		// client
+		go client.DeleteOldBackup()
+		// start client
 		client.StartBackup()
 	}
 

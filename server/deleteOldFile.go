@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// DeleteOlderBackup for server
+// DeleteOldBackup for server
 func DeleteOldBackup() {
 	// sleep 30 minutes
 	time.Sleep(30 * time.Minute)
