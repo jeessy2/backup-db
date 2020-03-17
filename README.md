@@ -7,7 +7,7 @@
   - [X] 备份失败邮件通知
   - [X] 每日凌晨自动备份
   - [X] 可设置备份文件最大保存天数(最少3天)
-  - [X] 参考tls实现加密传输备份文件到服务端(rsa非对称加密 + aes-gcm对称加密)
+  - [X] 参考tls实现加密传输备份文件到服务端，rsa非对称交换密钥 + aes-gcm对称加密(每次随机密码+固定验证密码)
 
 # backup databases
   Support all databases and the database images can be find in docker.
@@ -34,18 +34,18 @@ notice_email 异常通知的邮箱
 ```
 docker run -d \
 --name backup-server \
---restart=always
+--restart=always \
 -p 9977:9977 \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_port=9977 \
--e server_secret_key=please_change_it
+-e server_secret_key=please_change_it \
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:postgres-0.0.3
+jeessy/backup-db:postgres-0.0.4
 ```
 
 ## client (postgress)
@@ -56,7 +56,7 @@ docker run -d \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
--e server_secret_key=please_change_it
+-e server_secret_key=please_change_it \
 -e backup_project_name=db-name \
 -e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db-name\" > #{DATE}.sql" \
 -e max_save_days=30 \
@@ -65,7 +65,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:postgres-0.0.3
+jeessy/backup-db:postgres-0.0.4
 ```
 
 ## client (mysql5)
@@ -76,7 +76,7 @@ docker run -d \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
--e server_secret_key=please_change_it
+-e server_secret_key=please_change_it \
 -e backup_project_name=db-name \
 -e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql" \
 -e max_save_days=30 \
@@ -85,7 +85,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:mysql5-0.0.3
+jeessy/backup-db:mysql5-0.0.4
 ```
 
 ## build docker images (You may not need to build docker images, if you use postgres or mysql5)
@@ -93,6 +93,6 @@ jeessy/backup-db:mysql5-0.0.3
 # first git clone
 # change Dockerfile
 # build docker images
-docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.3
-docker build . -f Dockerfile -t jeessy/backup-db:postgres-0.0.3
+docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.4
+docker build . -f Dockerfile -t jeessy/backup-db:postgres-0.0.4
 ```
