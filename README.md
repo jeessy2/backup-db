@@ -7,6 +7,7 @@
   - [X] 备份失败邮件通知
   - [X] 每日凌晨自动备份
   - [X] 可设置备份文件最大保存天数(最少3天)
+  - [X] 参考tls实现加密传输备份文件到服务端(rsa非对称加密 + aes-gcm对称加密)
 
 # backup databases
   Support all databases and the database images can be find in docker.
@@ -16,11 +17,13 @@
   - [x] Send email when backup failed.
   - [x] Automatic backup in every night.
   - [x] The maximum number of days to save backup files can be set (at least 3 days).
+  - [x] Reference to the TLS implementation of encryption transfer backup files to the server.
 
 ## docker 环境变量说明
 ```
 backup_server_ip 不填默认为二次备份的服务器
 backup_server_port 二次备份服务器的端口
+server_secret_key 服务端验证密码
 backup_project_name 项目名称，一般就是数据库名称。
 backup_command 备份命令，必须包含#{DATE}
 max_save_days 备份文件最大保存天数
@@ -35,6 +38,7 @@ docker run -d \
 -p 9977:9977 \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_port=9977 \
+-e server_secret_key=please_change_it
 -e max_save_days=30 \
 -e notice_email=277172506@qq.com \
 -e smtp_host=smtp.office365.com \
@@ -52,6 +56,7 @@ docker run -d \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
+-e server_secret_key=please_change_it
 -e backup_project_name=db-name \
 -e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db-name\" > #{DATE}.sql" \
 -e max_save_days=30 \
@@ -71,6 +76,7 @@ docker run -d \
 -v /opt/backup-files:/app/backup-files \
 -e backup_server_ip=192.168.1.76 \
 -e backup_server_port=9977 \
+-e server_secret_key=please_change_it
 -e backup_project_name=db-name \
 -e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql" \
 -e max_save_days=30 \
