@@ -64,7 +64,7 @@ func backup() (outFileName os.FileInfo, err error) {
 	shellName := time.Now().Format("2006_01_02_") + "backup.sh"
 
 	file, err := os.Create(shellName)
-	file.Chmod(700)
+	file.Chmod(0700)
 	if err == nil {
 		file.WriteString(shellString)
 		file.Close()
