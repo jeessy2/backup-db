@@ -4,8 +4,9 @@ package entity
 // go的实体需大写对应config.yml的key, key全部小写
 type Config struct {
 	Server struct {
-		IP         string
-		ServerPort int
+		IP              string
+		ServerPort      int
+		SecretKey       []byte
 	}
 	ProjectName string
 	// 命令
@@ -13,9 +14,9 @@ type Config struct {
 	MaxSaveDays int
 	BackupPath  string
 	NoticeEmail string
-	SMTPConfig struct {
-		Host string
-		Port int
+	SMTPConfig  struct {
+		Host     string
+		Port     int
 		Username string
 		Password string
 	}

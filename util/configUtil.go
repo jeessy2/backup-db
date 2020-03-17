@@ -2,9 +2,11 @@ package util
 
 import (
 	"backup-db/entity"
+	"encoding/hex"
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // 缓存已经读取到的配置
@@ -36,6 +38,36 @@ func getConfigInner(workDir string) (*entity.Config, error) {
 		log.Println("backup_server_port default: ", serverPort)
 	}
 	config.Server.ServerPort = serverPort
+
+	secretKey := os.Getenv("server_secret_key")
+	if secretKey == "" {
+		nonce, _ := hex.DecodeString("68af433ace5112d34fad3e24")
+		config.Server.SecretKey = nonce
+	} else {
+		// replace others to 1~9, a~f
+		for _, key := range secretKey {
+			if key >= 48 && key <= 57 {
+				continue
+			}
+			if key >= 97 && key <= 102 {
+				continue
+			}
+			secretKey = strings.ReplaceAll(secretKey, string(key), "b")
+		}
+		// must be 24
+		oriLen := len(secretKey)
+		if oriLen < 24 {
+			for i := 0; i < 24-oriLen; i++ {
+				secretKey += "a"
+			}
+		}
+		if oriLen > 24 {
+			secretKey = secretKey[:24]
+		}
+		// decode
+		decode, _ := hex.DecodeString(secretKey)
+		config.Server.SecretKey = decode
+	}
 
 	config.ProjectName = os.Getenv("backup_project_name")
 	config.Command = os.Getenv("backup_command")

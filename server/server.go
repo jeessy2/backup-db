@@ -37,22 +37,23 @@ func handleConnection(conn net.Conn) {
 	defer conn.Close()
 	remoteAddr := conn.RemoteAddr().String()
 	log.Println(remoteAddr, "connected success!")
+	randomKey, err := util.SendRSAPublicKey(conn)
 
 	// file name
-	outFileName, err := util.ConnReceiveString(conn)
+	outFileName, err := util.ConnReceiveString(conn, randomKey)
 	if err != nil {
 		return
 	}
-	if !util.ConnSendString(conn, "ok") {
+	if !util.ConnSendString(conn, "ok", randomKey) {
 		return
 	}
 
 	// receive file size
-	fileSizeStr, err := util.ConnReceiveString(conn)
+	fileSizeStr, err := util.ConnReceiveString(conn, randomKey)
 	if err != nil {
 		return
 	}
-	if !util.ConnSendString(conn, "ok") {
+	if !util.ConnSendString(conn, "ok", randomKey) {
 		return
 	}
 	fileSize, err := strconv.Atoi(fileSizeStr)
@@ -87,8 +88,10 @@ func handleConnection(conn net.Conn) {
 	go util.ProgressDisplay(&progress)
 
 	for {
-		buffer := make([]byte, 1024)
+		// aes gcm 1024 bytes encrypt to 1040 bytes
+		buffer := make([]byte, 1040)
 		len, err := conn.Read(buffer)
+
 		if err != nil {
 			log.Printf("Read from %s : %s , error: %s\n", remoteAddr, newFileName, err)
 			progress.StopDisplay = true
@@ -96,9 +99,11 @@ func handleConnection(conn net.Conn) {
 		}
 
 		if len > 0 {
-			writeLen, err := file.Write(buffer[:len])
+			bytes := util.AesGcmDecrypt(randomKey, buffer[:len])
+			writeLen, err := file.Write(bytes)
 			currentReceivedLen += writeLen
-			if err != nil || writeLen != len {
+
+			if err != nil {
 				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
 				progress.StopDisplay = true
 				break
