@@ -10,7 +10,7 @@ import (
 
 // SendFile send file to server
 func SendFile(fileName string) {
-	log.Println("Starting send file to server: ", util.GetConfig().Server.IP, ":", util.GetConfig().Server.ServerPort)
+	log.Printf("Starting send file to server: %s:%d", util.GetConfig().Server.IP, util.GetConfig().Server.ServerPort)
 
 	serverAddr := util.GetConfig().Server.IP + ":" + strconv.Itoa(util.GetConfig().Server.ServerPort)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverAddr)
@@ -48,6 +48,7 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 		log.Println("Read file \"", fileName, "\" error: ", err)
 		return
 	}
+
 	// send file
 	fileSize := len(bytes)
 	// send file size
@@ -68,6 +69,8 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 	}
 	go util.ProgressDisplay(&progress)
 
+	var currentSendBytes []byte
+
 	for i := 0; i < fileSize; i++ {
 		firstIndex := i * 1024
 		nextIndex := (i + 1) * 1024
@@ -77,23 +80,18 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 		}
 		if nextIndex >= fileSize {
 			// can't over
-			encryptBytes := util.AesGcmEncrypt(randomKey, bytes[firstIndex:fileSize])
-			writeLen, err := conn.Write(encryptBytes)
-			if err != nil || writeLen != len(encryptBytes) {
-				log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
-				progress.StopDisplay = true
-				break
-			}
+			currentSendBytes = util.AesGcmEncrypt(randomKey, bytes[firstIndex:fileSize])
 			currentSendLen = fileSize
 		} else {
-			encryptBytes := util.AesGcmEncrypt(randomKey, bytes[firstIndex:nextIndex])
-			writeLen, err := conn.Write(encryptBytes)
-			if err != nil || writeLen != len(encryptBytes) {
-				log.Printf("Write file to server %s : %s with error: %s\n", serverAddr, fileName, err)
-				progress.StopDisplay = true
-				break
-			}
+			currentSendBytes = util.AesGcmEncrypt(randomKey, bytes[firstIndex:nextIndex])
 			currentSendLen = nextIndex
+		}
+
+		writeLen, err := conn.Write(currentSendBytes)
+		if err != nil || writeLen != len(currentSendBytes) {
+			log.Printf("Write file to server %s:%s with error: %s\n", serverAddr, fileName, err)
+			progress.StopDisplay = true
+			break
 		}
 	}
 

@@ -87,38 +87,68 @@ func handleConnection(conn net.Conn) {
 	}
 	go util.ProgressDisplay(&progress)
 
+	// receive
+	// aes gcm 1024 bytes encrypt to 1040 bytes
+	buffer := make([]byte, 1040)
 	for {
-		// aes gcm 1024 bytes encrypt to 1040 bytes
-		buffer := make([]byte, 1040)
-		len, err := conn.Read(buffer)
+		readLen, err := conn.Read(buffer)
+		if readError(err, &progress) != nil {
+			break
+		}
 
+		// Read again when the receive is incomplete
+		if readLen < 1040 {
+			bufferAgain := make([]byte, 1040-readLen)
+			readLenAgain, errAgain := conn.Read(bufferAgain)
+			if errAgain != nil {
+				// last bytes don't display message
+				if errAgain.Error() != "EOF" && readError(errAgain, &progress) != nil {
+					break
+				}
+			} else {
+				for i := 0; i < readLenAgain; i++ {
+					buffer[i+readLen] = bufferAgain[i]
+				}
+				readLen += readLenAgain
+			}
+		}
+
+		// write to file
+		writeLen, err := file.Write(util.AesGcmDecrypt(randomKey, buffer[:readLen]))
+		currentReceivedLen += writeLen
 		if err != nil {
-			log.Printf("Read from %s : %s , error: %s\n", remoteAddr, newFileName, err)
+			log.Printf("Write %s : %s, error: %s\n", remoteAddr, newFileName, err)
 			progress.StopDisplay = true
 			break
 		}
 
-		if len > 0 {
-			bytes := util.AesGcmDecrypt(randomKey, buffer[:len])
-			writeLen, err := file.Write(bytes)
-			currentReceivedLen += writeLen
-
-			if err != nil {
-				log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
-				progress.StopDisplay = true
-				break
-			}
-			// equals, received file success
-			if currentReceivedLen == fileSize {
-				log.Printf("Write file success %s : %s\n", remoteAddr, newFileName)
-				progress.StopDisplay = true
-				break
-			}
-		} else {
+		// equals break
+		if currentReceivedLen == fileSize {
+			progress.StopDisplay = true
 			break
 		}
+
 	}
 
+	// result
+	if currentReceivedLen == fileSize {
+		if err != nil {
+			log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
+		} else {
+			log.Printf("Write file success %s : %s, fileSize: %d bytes\n", remoteAddr, newFileName, fileSize)
+		}
+	} else {
+		log.Printf("Write file %s : %s with error! received size is not equals file size!", remoteAddr, newFileName)
+	}
+
+}
+
+func readError(err error, progress *util.Progress) error {
+	if err != nil {
+		log.Printf("Read from %s : %s , error: %s\n", progress.RemoteAddr, progress.FileName, err)
+		progress.StopDisplay = true
+	}
+	return err
 }
 
 // make new file name, while be auto add 1 when file exist
