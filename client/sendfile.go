@@ -2,9 +2,10 @@ package client
 
 import (
 	"backup-db/util"
-	"io/ioutil"
+	"bufio"
 	"log"
 	"net"
+	"os"
 	"strconv"
 )
 
@@ -43,16 +44,18 @@ func SendFile(fileName string) {
 
 func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey string) {
 
-	bytes, err := ioutil.ReadFile(fileName)
+	file, err := os.Open(fileName)
+	fileInfo, err := file.Stat()
 	if err != nil {
-		log.Println("Read file \"", fileName, "\" error: ", err)
+		log.Printf("Read file %s with error: %s\n", fileName, err)
 		return
 	}
+	defer file.Close()
 
-	// send file
-	fileSize := len(bytes)
 	// send file size
+	fileSize := int(fileInfo.Size())
 	util.ConnSendString(conn, strconv.Itoa(fileSize), randomKey)
+
 	// it's ok?
 	ok, err := util.ConnReceiveString(conn, randomKey)
 	if err != nil || "ok" != ok {
@@ -69,26 +72,24 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 	}
 	go util.ProgressDisplay(&progress)
 
-	var currentSendBytes []byte
-
-	for i := 0; i < fileSize; i++ {
-		firstIndex := i * 1024
-		nextIndex := (i + 1) * 1024
-		if firstIndex > fileSize {
-			progress.StopDisplay = true
+	// read file with bufio
+	buffer := make([]byte, 1024)
+	reader := bufio.NewReader(file)
+	for {
+		readLen, err := reader.Read(buffer)
+		if err != nil {
+			if err.Error() != "EOF" {
+				log.Printf("Read file %s with error: %s\n", fileName, err)
+			}
 			break
 		}
-		if nextIndex >= fileSize {
-			// can't over
-			currentSendBytes = util.AesGcmEncrypt(randomKey, bytes[firstIndex:fileSize])
-			currentSendLen = fileSize
-		} else {
-			currentSendBytes = util.AesGcmEncrypt(randomKey, bytes[firstIndex:nextIndex])
-			currentSendLen = nextIndex
-		}
 
-		writeLen, err := conn.Write(currentSendBytes)
-		if err != nil || writeLen != len(currentSendBytes) {
+		currentSendLen += readLen
+
+		encryptBytes := util.AesGcmEncrypt(randomKey, buffer[:readLen])
+
+		writeLen, err := conn.Write(encryptBytes)
+		if err != nil || writeLen != len(encryptBytes) {
 			log.Printf("Write file to server %s:%s with error: %s\n", serverAddr, fileName, err)
 			progress.StopDisplay = true
 			break
