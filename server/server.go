@@ -132,11 +132,7 @@ func handleConnection(conn net.Conn) {
 
 	// result
 	if currentReceivedLen == fileSize {
-		if err != nil {
-			log.Printf("Write file %s : %s, error: %s\n", remoteAddr, newFileName, err)
-		} else {
-			log.Printf("Write file success %s : %s, fileSize: %d bytes\n", remoteAddr, newFileName, fileSize)
-		}
+		log.Printf("Write file success %s : %s, fileSize: %d bytes\n", remoteAddr, newFileName, fileSize)
 	} else {
 		log.Printf("Write file %s : %s with error! received size is not equals file size!", remoteAddr, newFileName)
 	}
