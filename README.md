@@ -30,7 +30,7 @@ max_save_days 备份文件最大保存天数
 notice_email 异常通知的邮箱
 ```
 
-## server(You probably don't need this)
+## server(You don't need this, maybe)
 ```
 docker run -d \
 --name backup-server \
