@@ -45,7 +45,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:latest
+jeessy/backup-db:0.0.5
 ```
 
 ## client (postgress)
