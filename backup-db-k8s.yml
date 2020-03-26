@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backup-server-service
+  labels:
+    app: backup-server
+spec:
+  type: NodePort
+  ports:
+  - port: 9977
+    targetPort: 9977
+    nodePort: 30001
+  selector:
+    app: backup-server
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-server-deploy
+  labels:
+    app: backup-server
+spec:
+  replicas: 1
+  selector:  # 定义标签选择器
+    matchLabels:
+      app: backup-server
+  template:
+    metadata:
+      labels:
+        app: backup-server
+    spec:   # 指定该资源的内容
+      containers:
+      - name: backup-server  #容器的名字
+        image: jeessy/backup-db:postgres-0.0.5
+        env:
+        - name: backup_server_port
+          value: "9977"
+        - name: server_secret_key
+          value: please_change_it
+        - name: max_save_days
+          value: "30"
+        - name: notice_email
+          value: 277172506@qq.com
+        - name: smtp_host
+          value: smtp.office365.com
+        - name: smtp_port
+          value: "587"
+        - name: smtp_username
+          value: backup-db-docker@outlook.com
+        - name: smtp_password
+          value: kLhHbTC6Ak5B2hw
+        volumeMounts:
+          - mountPath: /app/backup-files
+            name: files
+        ports:
+        - containerPort: 9977
+      volumes:
+      - name: files
+        hostPath:
+          path: /opt/backup-files
+          type: Directory
