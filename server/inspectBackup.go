@@ -12,7 +12,7 @@ import (
 // InspectBackup Inspect Backup
 func InspectBackup() {
 	for {
-		// sleep()
+		sleep()
 		inspectInner()
 	}
 }
