@@ -11,6 +11,8 @@ func main() {
 	if util.GetConfig().Server.IP == "" {
 		// delete old backup
 		go server.DeleteOldBackup()
+		// inspect backup
+		go server.InspectBackup()
 		// start server
 		server.Start()
 	} else {
