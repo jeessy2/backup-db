@@ -33,7 +33,7 @@ spec:
     spec:   # 指定该资源的内容
       containers:
       - name: backup-server  #容器的名字
-        image: jeessy/backup-db:postgres-0.0.5
+        image: jeessy/backup-db:postgres-0.0.6
         env:
         - name: backup_server_port
           value: "9977"
