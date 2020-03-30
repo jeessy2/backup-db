@@ -5,6 +5,7 @@
   - [X] 支持自定义命令
   - [X] 可以把备份后的文件存入另一台服务器
   - [X] 备份失败邮件通知
+  - [X] 服务端每日10点检查未上传的备份文件，如未检查到发邮件通知
   - [X] 每日凌晨自动备份
   - [X] 可设置备份文件最大保存天数(最少3天)
   - [X] 参考tls实现加密传输备份文件到服务端，rsa非对称交换密钥 + aes-gcm对称加密(每次随机密码+固定验证密码)
@@ -15,6 +16,7 @@
   - [X] Obsolete files will be deleted automatically.
   - [X] You can copy the backup files to another server.
   - [x] Send email when backup failed.
+  - [x] The server checks the backup files that are not uploaded at 10 o'clock every day. If the backup files are not checked, an email notice will be sent
   - [x] Automatic backup in every night.
   - [x] The maximum number of days to save backup files can be set (at least 3 days).
   - [x] Reference to the TLS implementation of encryption transfer backup files to the server.
