@@ -17,6 +17,7 @@ const ParentSavePath = "backup-files"
 
 // StartBackup start backup db
 func StartBackup() {
+	var unSendFiles = []string{}
 	err := prepare()
 	if err == nil {
 		for {
@@ -24,7 +25,12 @@ func StartBackup() {
 			outFileName, err := backup()
 			if err == nil {
 				// send file to server
-				SendFile(outFileName.Name())
+				err = SendFile(outFileName.Name())
+				if err != nil {
+					unSendFiles = append(unSendFiles, outFileName.Name())
+				} else {
+					unSendFiles = sendFileAgain(unSendFiles)
+				}
 			} else {
 				// send email
 				util.SendEmail("The \""+util.GetConfig().ProjectName+"\" is backup failed!", err.Error())
@@ -109,6 +115,17 @@ func findBackupFile(todayString string) (backupFile os.FileInfo, err error) {
 	}
 	err = errors.New("Can't find the backup file which containes " + todayString)
 	return
+}
+
+// send file again
+func sendFileAgain(unSendFiles []string) []string {
+	newUnSendFils := []string{}
+	for _, file := range unSendFiles {
+		if nil != SendFile(file) {
+			newUnSendFils = append(newUnSendFils, file)
+		}
+	}
+	return newUnSendFils
 }
 
 func sleep() {

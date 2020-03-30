@@ -10,7 +10,7 @@ import (
 )
 
 // SendFile send file to server
-func SendFile(fileName string) {
+func SendFile(fileName string) error {
 	log.Printf("Starting send file to server: %s:%d", util.GetConfig().Server.IP, util.GetConfig().Server.ServerPort)
 
 	serverAddr := util.GetConfig().Server.IP + ":" + strconv.Itoa(util.GetConfig().Server.ServerPort)
@@ -21,34 +21,34 @@ func SendFile(fileName string) {
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
 		log.Println("Connect server error: ", err)
-	} else {
-		defer conn.Close()
-
-		randomKey, err := util.ReceiveRSAPublicKey(conn)
-		if err != nil {
-			return
-		}
-
-		// send file name, should add parentSavePath + ProjectName
-		util.ConnSendString(conn, ParentSavePath+"/"+util.GetConfig().ProjectName+"/"+fileName, randomKey)
-
-		// it's ok?
-		ok, err := util.ConnReceiveString(conn, randomKey)
-		if err != nil || "ok" != ok {
-			return
-		}
-
-		sendFileReal(fileName, serverAddr, conn, randomKey)
+		return err
 	}
+	defer conn.Close()
+
+	randomKey, err := util.ReceiveRSAPublicKey(conn)
+	if err != nil {
+		return err
+	}
+
+	// send file name, should add parentSavePath + ProjectName
+	util.ConnSendString(conn, ParentSavePath+"/"+util.GetConfig().ProjectName+"/"+fileName, randomKey)
+
+	// it's ok?
+	ok, err := util.ConnReceiveString(conn, randomKey)
+	if err != nil || "ok" != ok {
+		return err
+	}
+
+	return sendFileReal(fileName, serverAddr, conn, randomKey)
 }
 
-func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey string) {
+func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey string) error {
 
 	file, err := os.Open(fileName)
 	fileInfo, err := file.Stat()
 	if err != nil {
 		log.Printf("Read file %s with error: %s\n", fileName, err)
-		return
+		return err
 	}
 	defer file.Close()
 
@@ -59,7 +59,7 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 	// it's ok?
 	ok, err := util.ConnReceiveString(conn, randomKey)
 	if err != nil || "ok" != ok {
-		return
+		return err
 	}
 
 	currentSendLen := 0
@@ -95,5 +95,7 @@ func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey s
 			break
 		}
 	}
+
+	return err
 
 }
