@@ -47,7 +47,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:0.0.6
+jeessy/backup-db:0.0.7
 ```
 
 ## client (postgress)
@@ -67,7 +67,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:postgres-0.0.6
+jeessy/backup-db:postgres-0.0.7
 ```
 
 ## client (mysql5)
@@ -87,7 +87,7 @@ docker run -d \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
 -e smtp_password=kLhHbTC6Ak5B2hw \
-jeessy/backup-db:mysql5-0.0.6
+jeessy/backup-db:mysql5-0.0.7
 ```
 
 ## build docker images (You may not need to build docker images, if you use postgres or mysql5)
@@ -95,8 +95,8 @@ jeessy/backup-db:mysql5-0.0.6
 # first git clone
 # change Dockerfile
 # build docker images
-sudo docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.6
-sudo docker build . -f Dockerfile_postgres -t jeessy/backup-db:postgres-0.0.6
+sudo docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.7
+sudo docker build . -f Dockerfile_postgres -t jeessy/backup-db:postgres-0.0.7
 # build server
-sudo docker build . -f Dockerfile -t jeessy/backup-db:0.0.6
+sudo docker build . -f Dockerfile -t jeessy/backup-db:0.0.7
 ```
