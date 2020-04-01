@@ -53,7 +53,7 @@ func inspectInner() {
 
 func sleep() {
 	sleepHours := 10 - time.Now().Hour()
-	if sleepHours < 0 {
+	if sleepHours <= 0 {
 		sleepHours = 24 + 10 - time.Now().Hour()
 	}
 	log.Println("Run inspect backup files again after", sleepHours, "hours")
