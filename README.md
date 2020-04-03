@@ -42,11 +42,11 @@ docker run -d \
 -e backup_server_port=9977 \
 -e server_secret_key=please_change_it \
 -e max_save_days=30 \
--e notice_email=277172506@qq.com \
+-e notice_email=xxx@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=kLhHbTC6Ak5B2hw \
+-e smtp_password=password \
 jeessy/backup-db:0.0.7
 ```
 
@@ -62,11 +62,11 @@ docker run -d \
 -e backup_project_name=db-name \
 -e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db-name\" > #{DATE}.sql" \
 -e max_save_days=30 \
--e notice_email=277172506@qq.com \
+-e notice_email=xxx@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=kLhHbTC6Ak5B2hw \
+-e smtp_password=password \
 jeessy/backup-db:postgres-0.0.7
 ```
 
@@ -82,11 +82,11 @@ docker run -d \
 -e backup_project_name=db-name \
 -e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql" \
 -e max_save_days=30 \
--e notice_email=277172506@qq.com \
+-e notice_email=xxx@qq.com \
 -e smtp_host=smtp.office365.com \
 -e smtp_port=587 \
 -e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=kLhHbTC6Ak5B2hw \
+-e smtp_password=password \
 jeessy/backup-db:mysql5-0.0.7
 ```
 
