@@ -8,7 +8,7 @@
   - [X] 服务端每日10点检查上传的备份文件，如未检查到发邮件通知
   - [X] 每日凌晨自动备份
   - [X] 可设置备份文件最大保存天数(最少3天)
-  - [X] 参考tls实现加密传输备份文件到服务端，rsa非对称交换密钥 + aes-gcm对称加密(每次随机密码+固定验证密码)
+  - [X] 参考tls实现加密传输备份文件到服务端，rsa非对称交换密钥 + aes-256-gcm对称加密(每次随机密码+固定验证密码)
 
 # backup databases
   Support all databases and the database images can be find in docker.
