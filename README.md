@@ -80,7 +80,7 @@ docker run -d \
 -e backup_server_port=9977 \
 -e server_secret_key=please_change_it \
 -e backup_project_name=db-name \
--e backup_command="mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql" \
+-e backup_command=mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql \
 -e max_save_days=30 \
 -e notice_email=xxx@qq.com \
 -e smtp_host=smtp.office365.com \
