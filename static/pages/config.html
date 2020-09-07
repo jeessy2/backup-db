@@ -1,0 +1,213 @@
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="jie">
+  <title>Backup-DB-Docker</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/common.css">
+</head>
+
+<body>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2"
+            viewBox="0 0 24 24" focusable="false">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" /></svg>
+          <strong>Backup-DB-Docker</strong>
+        </a>
+      </div>
+    </div>
+  </header>
+  
+  <main role="main" style="margin-top: 30px">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form action="/save" method="post">
+
+          <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Save</button>
+        
+          <div class="portlet">
+            <h5 class="portlet__head">服务配置</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label for="IP" class="col-sm-2 col-form-label">类型选择</label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Type" id="client" value="client" onclick="clientCheckedFun()" {{if eq $.Type "client"}}checked{{end}}>
+                    <label class="form-check-label" for="client">
+                      Client
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Type" id="server" value="server" onclick="serverCheckedFun()" {{if eq $.Type "server"}}checked{{end}}>
+                    <label class="form-check-label" for="server">
+                      Server
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="IP" class="col-sm-2 col-form-label">IP</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="IP" id="IP" value="{{.IP}}" aria-describedby="ip_help">
+                  <small id="ip_help" class="form-text text-muted">如果是服务端不需要填写</small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="Port" class="col-sm-2 col-form-label">Port</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="Port" id="Port" value="{{.Port}}" required>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="Password" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="Password" id="Password" value="{{.Password}}" required aria-describedby="password_help">
+                  <small id="password_help" class="form-text text-muted">客户端和服务端需保持一致</small>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="portlet">
+            <h5 class="portlet__head">备份设置</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label for="Command" class="col-sm-2 col-form-label">备份脚本</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control" id="Command" name="Command" rows="3" aria-describedby="Command_help">{{.Command}}</textarea>
+                  <small id="Command_help" class="form-text text-muted">
+                    <p>必须包含#{DATE}</p>
+                    <p>pg_dump -a "host=192.168.1.x port=5432 user=postgres password=password dbname=db_name" > #{DATE}.sql</p>
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="SaveDays" class="col-sm-2 col-form-label">保存天数</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" name="SaveDays" id="SaveDays" value="{{.SaveDays}}" min="1">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="portlet">
+            <h5 class="portlet__head">Email通知</h5>
+            <div class="portlet__body">
+
+              <div class="form-group row">
+                <label for="NoticeEmail" class="col-sm-2 col-form-label">接收人Email</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="NoticeEmail" id="NoticeEmail" value="{{.NoticeEmail}}">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="SMTPHost" class="col-sm-2 col-form-label">SMTP Host</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="SMTPHost" id="SMTPHost" value="{{.SMTPHost}}">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="SMTPPort" class="col-sm-2 col-form-label">SMTP Port</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="SMTPPort" id="SMTPPort" value="{{.SMTPPort}}">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="SMTPUsername" class="col-sm-2 col-form-label">SMTP Username</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="SMTPUsername" id="SMTPUsername" value="{{.SMTPUsername}}">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="SMTPPassword" class="col-sm-2 col-form-label">SMTP Password</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="SMTPPassword" id="SMTPPassword" value="{{.SMTPPassword}}">
+                </div>
+              </div>
+              
+
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Save</button>
+
+        </form>
+      </div>
+
+    </div>
+    <div class="col-md-3">
+      <p class="font-weight-lighter text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+    </div>
+  </main>
+
+  <script>
+    function getQueryVariable(){
+      var query = window.location.search.substring(1);
+      if (query === "saveOk=true") {
+        window.location.href = "/"
+        alert("保存成功")
+      }
+    }
+    getQueryVariable()
+
+    function clientCheckedFun() {
+      document.getElementById("IP").disabled = false
+      document.getElementById("Command").disabled = false
+    }
+
+    function serverCheckedFun() {
+      document.getElementById("IP").disabled = true
+      document.getElementById("IP").value = ""
+      document.getElementById("Command").disabled = true
+      document.getElementById("Command").value = ""
+    }
+
+
+    var type = '{{$.Type}}'
+
+    switch(type){
+      case "server": {
+        serverCheckedFun()
+        break;
+      }
+      default: {
+        clientCheckedFun()
+        break;
+      }
+    }
+  </script>
+
+  <script>
+    function getLogs() {
+      var ajax = new XMLHttpRequest();
+      ajax.open("get","/logs");
+      ajax.send();
+      ajax.onreadystatechange = function () {
+        if (ajax.readyState==4 &&ajax.status==200) {
+          document.getElementById("logs").innerHTML = ajax.responseText
+      　}
+      }
+    }
+
+    getLogs()
+    setInterval(getLogs, 5 * 1000)
+  </script>
+
+</html>

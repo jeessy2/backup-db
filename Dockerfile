@@ -1,5 +1,5 @@
 # build stage(Only for server)
-FROM golang AS builder
+FROM golang:alpine AS builder
 WORKDIR /app
 COPY . .
 RUN go env -w GO111MODULE=on \
@@ -9,10 +9,9 @@ RUN go env -w GO111MODULE=on \
     && go build -v .
 
 # final stage, build server
-FROM centos
+FROM golang:alpine
 WORKDIR /app
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone
+ENV TZ=Asia/Shanghai
 COPY --from=builder /app/backup-db /app/backup-db
 ENTRYPOINT /app/backup-db
-LABEL Name=backup-db-server Version=0.0.7
+LABEL Name=backup-db-server Version=1.0.0
