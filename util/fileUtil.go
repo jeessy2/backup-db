@@ -24,22 +24,26 @@ func PathExists(path string) bool {
 // DeleteOlderFiles delete older files
 func DeleteOlderFiles(path string, backupFiles []os.FileInfo) {
 
-	ago := time.Now()
-	lastDay, _ := time.ParseDuration("-" + strconv.Itoa(GetConfig().MaxSaveDays*24) + "h")
-	ago = ago.Add(lastDay)
-
-	// delete older file when file numbers gt MaxSaveDays
-	for _, backupFile := range backupFiles {
-		if backupFile.ModTime().Before(ago) {
-			filepath := path + "/" + backupFile.Name()
-			err := os.Remove(filepath)
-			if err != nil {
-				log.Printf("Delete older file %s failed", filepath)
-			} else {
-				log.Printf("Delete older file %s successed", filepath)
+	conf, err := GetConfig()
+	if err == nil {
+		ago := time.Now()
+		lastDay, _ := time.ParseDuration("-" + strconv.Itoa(conf.SaveDays*24) + "h")
+		ago = ago.Add(lastDay)
+	
+		// delete older file when file numbers gt MaxSaveDays
+		for _, backupFile := range backupFiles {
+			if backupFile.ModTime().Before(ago) {
+				filepath := path + "/" + backupFile.Name()
+				err := os.Remove(filepath)
+				if err != nil {
+					log.Printf("Delete older file %s failed", filepath)
+				} else {
+					log.Printf("Delete older file %s successed", filepath)
+				}
 			}
 		}
 	}
+
 }
 
 // SleepForFileDelete Sleep For File Delete
