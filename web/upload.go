@@ -41,4 +41,6 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Write file failed: %s\n", err)
 		return
 	}
+
+	log.Printf("Client %s upload file \"%s\" success! ", r.RemoteAddr, destFile.Name())
 }

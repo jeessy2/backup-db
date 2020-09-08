@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backup-db/util"
 	"backup-db/web"
 	"os"
 
@@ -17,10 +18,10 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.Handle("/favicon.ico", http.StripPrefix("/", http.FileServer(http.Dir("static"))))
 
-	http.HandleFunc("/", web.WritingConfig)
-	http.HandleFunc("/save", web.Save)
-	http.HandleFunc("/logs", web.Logs)
-	http.HandleFunc("/upload", web.Upload)
+	http.HandleFunc("/", util.BasicAuth(web.WritingConfig))
+	http.HandleFunc("/save", util.BasicAuth(web.Save))
+	http.HandleFunc("/logs", util.BasicAuth(web.Logs))
+	http.HandleFunc("/upload", util.BasicAuth(web.Upload))
 
 	// 运行
 	go web.Run()

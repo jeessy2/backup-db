@@ -11,7 +11,7 @@ import (
 // SendEmail send email
 func SendEmail(subject string, content string) bool {
 	conf, err := GetConfig()
-	if err == nil {
+	if err == nil && conf.SMTPHost != "" {
 		if strings.Contains(conf.NoticeEmail, "@") {
 			m := gomail.NewMessage()
 			m.SetHeader("From", conf.SMTPUsername)
