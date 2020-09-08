@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-const parentSavePath = "backup-files"
-
 // PathExists Get path exist
 func PathExists(path string) bool {
 	_, err := os.Stat(path)
@@ -29,7 +27,7 @@ func DeleteOlderFiles(path string, backupFiles []os.FileInfo) {
 		ago := time.Now()
 		lastDay, _ := time.ParseDuration("-" + strconv.Itoa(conf.SaveDays*24) + "h")
 		ago = ago.Add(lastDay)
-	
+
 		// delete older file when file numbers gt MaxSaveDays
 		for _, backupFile := range backupFiles {
 			if backupFile.ModTime().Before(ago) {

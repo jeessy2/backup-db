@@ -1,6 +1,7 @@
 package client
 
 import (
+	"backup-db/entity"
 	"backup-db/util"
 	"bufio"
 	"log"
@@ -10,10 +11,10 @@ import (
 )
 
 // SendFile send file to server
-func SendFile(fileName string) error {
-	log.Printf("Starting send file to server: %s:%d", util.GetConfig().Server.IP, util.GetConfig().Server.ServerPort)
+func SendFile(conf *entity.Config, fileName string) error {
+	log.Printf("Starting send file to server: %s:%d", conf.Server.IP, conf.Server.Port)
 
-	serverAddr := util.GetConfig().Server.IP + ":" + strconv.Itoa(util.GetConfig().Server.ServerPort)
+	serverAddr := conf.Server.IP + ":" + strconv.Itoa(conf.Server.Port)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverAddr)
 	if err != nil {
 		log.Printf("Resolve %s with error: %s \n", serverAddr, err)
@@ -30,8 +31,8 @@ func SendFile(fileName string) error {
 		return err
 	}
 
-	// send file name, should add parentSavePath + ProjectName
-	util.ConnSendString(conn, ParentSavePath+"/"+util.GetConfig().ProjectName+"/"+fileName, randomKey)
+	// send file name, should add ProjectPath
+	util.ConnSendString(conn, conf.GetProjectPath()+"/"+fileName, randomKey)
 
 	// it's ok?
 	ok, err := util.ConnReceiveString(conn, randomKey)

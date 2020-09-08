@@ -32,22 +32,18 @@ max_save_days 备份文件最大保存天数
 notice_email 异常通知的邮箱
 ```
 
+
 ## server(You don't need this, maybe)
 ```
 docker run -d \
 --name backup-server \
 --restart=always \
 -p 9977:9977 \
+-p 9988:9987 \
 -v /opt/backup-files:/app/backup-files \
--e backup_server_port=9977 \
--e server_secret_key=please_change_it \
--e max_save_days=30 \
--e notice_email=xxx@qq.com \
--e smtp_host=smtp.office365.com \
--e smtp_port=587 \
--e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=password \
 jeessy/backup-db:0.0.7
+
+docker run -d --name backup-db-server --restart=always -p 9978:9978 -p 9977:9977 -v /Users/jie/backup-files-server:/app/backup-files backup-server:0.0.5
 ```
 
 ## client (postgress)

@@ -83,6 +83,16 @@
           <div class="portlet">
             <h5 class="portlet__head">备份设置</h5>
             <div class="portlet__body">
+
+              <div class="form-group row">
+                <label for="Command" class="col-sm-2 col-form-label">项目名称</label>
+                <div class="col-sm-10">
+                  <input class="form-control" id="ProjectName" name="ProjectName" rows="3" value="{{.ProjectName}}" aria-describedby="ProjectName_help">
+                  <small id="ProjectName_help" class="form-text text-muted">
+                  </small>
+                </div>
+              </div>
+
               <div class="form-group row">
                 <label for="Command" class="col-sm-2 col-form-label">备份脚本</label>
                 <div class="col-sm-10">
@@ -151,10 +161,11 @@
         </form>
       </div>
 
+      <div class="col-md-3">
+        <p class="font-weight-lighter text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+      </div>
     </div>
-    <div class="col-md-3">
-      <p class="font-weight-lighter text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
-    </div>
+
   </main>
 
   <script>
@@ -170,6 +181,7 @@
     function clientCheckedFun() {
       document.getElementById("IP").disabled = false
       document.getElementById("Command").disabled = false
+      document.getElementById("ProjectName").disabled = false
     }
 
     function serverCheckedFun() {
@@ -177,6 +189,8 @@
       document.getElementById("IP").value = ""
       document.getElementById("Command").disabled = true
       document.getElementById("Command").value = ""
+      document.getElementById("ProjectName").disabled = true
+      document.getElementById("ProjectName").value = ""
     }
 
 

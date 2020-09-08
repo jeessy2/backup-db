@@ -2,10 +2,12 @@ package util
 
 import (
 	"backup-db/entity"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
+	"strings"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -23,6 +25,8 @@ func GetConfig() (config *entity.Config, err error) {
 
 	//获取锁
 	lock.Lock()
+	//释放锁
+	defer lock.Unlock()
 
 	//业务逻辑操作
 	configFilePath := GetConfigFilePath()
@@ -39,9 +43,9 @@ func GetConfig() (config *entity.Config, err error) {
 
 	conf = &entity.Config{}
 	err = yaml.Unmarshal(byt, conf)
-
-	//释放锁
-	defer lock.Unlock()
+	if err == nil {
+		conf.PasswordBytes = execPassword(conf.Password)
+	}
 
 	return conf, err
 }
@@ -59,4 +63,35 @@ func GetConfigFilePath() string {
 		return "../.backup_db_docker_config.yaml"
 	}
 	return u.HomeDir + string(os.PathSeparator) + ".backup_db_docker_config.yaml"
+}
+
+func execPassword(secretKey string) []byte {
+	if secretKey == "" {
+		nonce, _ := hex.DecodeString("68af433ace5112d34fad3e24")
+		return nonce
+	}
+
+	// replace others to 1~9, a~f
+	for _, key := range secretKey {
+		if key >= 48 && key <= 57 {
+			continue
+		}
+		if key >= 97 && key <= 102 {
+			continue
+		}
+		secretKey = strings.ReplaceAll(secretKey, string(key), "b")
+	}
+	// must be 24
+	oriLen := len(secretKey)
+	if oriLen < 24 {
+		for i := 0; i < 24-oriLen; i++ {
+			secretKey += "a"
+		}
+	}
+	if oriLen > 24 {
+		secretKey = secretKey[:24]
+	}
+	// decode
+	decode, _ := hex.DecodeString(secretKey)
+	return decode
 }

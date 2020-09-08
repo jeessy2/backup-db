@@ -11,26 +11,26 @@ import (
 
 // Start server
 func Start() {
-	port := ":" + strconv.Itoa(util.GetConfig().Server.ServerPort)
-	listener, err := net.Listen("tcp", port)
-
+	conf, err := util.GetConfig()
 	if err == nil {
-		log.Println("Started server success!")
-		//循环接收客户端的连接，创建一个协程具体去处理连接
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Println("Accept error", err)
-				continue
+		port := ":" + strconv.Itoa(conf.Server.Port)
+		listener, err := net.Listen("tcp", port)
+
+		if err == nil {
+			log.Println("Started server success!")
+			//循环接收客户端的连接，创建一个协程具体去处理连接
+			for {
+				conn, err := listener.Accept()
+				if err != nil {
+					log.Println("Accept error", err)
+					continue
+				}
+
+				// handle connection
+				go handleConnection(conn)
 			}
-
-			// handle connection
-			go handleConnection(conn)
 		}
-	} else {
-		log.Panicln("Start server with error: ", err)
 	}
-
 }
 
 func handleConnection(conn net.Conn) {
