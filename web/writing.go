@@ -25,8 +25,7 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 	// default config
 	conf = &entity.Config{
 		Server: entity.Server{
-			Type:     "client",
-			Password: "change_it",
+			Type: "client",
 		},
 		SaveDays: 3,
 		SMTPConfig: entity.SMTPConfig{

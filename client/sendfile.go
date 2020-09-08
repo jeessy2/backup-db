@@ -21,29 +21,49 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	writer.WriteField("path", conf.GetProjectPath())
 	formFile, err := writer.CreateFormFile("uploadfile", fileName)
 	if err != nil {
-		log.Fatalf("Create form file failed: %s\n", err)
+		log.Printf("Create form file failed: %s\n", err)
+		return err
 	}
 
 	// 从文件读取数据，写入表单
 	srcFile, err := os.Open(conf.GetProjectPath() + "/" + fileName)
 	if err != nil {
-		log.Fatalf("%Open source file failed: s\n", err)
+		log.Printf("Open source file failed: %s\n", err)
+		return err
 	}
 	defer srcFile.Close()
 	_, err = io.Copy(formFile, srcFile)
 	if err != nil {
-		log.Fatalf("Write to form file falied: %s\n", err)
+		log.Printf("Write to form file falied: %s\n", err)
+		return err
 	}
 
 	// 发送表单
 	contentType := writer.FormDataContentType()
+
 	// 发送之前必须调用Close()以写入结尾行
 	writer.Close()
-	_, err = http.Post(conf.UploadURL, contentType, buf)
+
+	// 创建request
+	req, err := http.NewRequest(
+		"POST",
+		conf.UploadURL,
+		buf,
+	)
+	if err != nil {
+		log.Fatalf("Create request error: %s\n", err)
+		return err
+	}
+	req.Header.Set("Content-Type", contentType)
+	req.SetBasicAuth(conf.Username, conf.Password)
+
+	clt := http.Client{}
+	_, err = clt.Do(req)
+
 	if err != nil {
 		log.Fatalf("Post failed: %s\n", err)
 	} else {
-		log.Printf("Send file to server: %s success!", conf.Server.UploadURL)
+		log.Printf("Send file %s to server: %s success!", srcFile.Name(), conf.Server.UploadURL)
 	}
 
 	return err

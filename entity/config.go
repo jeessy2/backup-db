@@ -4,6 +4,7 @@ package entity
 // go的实体需大写对应config.yml的key, key全部小写
 type Config struct {
 	Server
+	User
 	ProjectName string
 	// 命令
 	Command    string
@@ -15,6 +16,7 @@ type Config struct {
 // ParentSavePath Parent Save Path
 const ParentSavePath = "backup-files"
 
+// GetProjectPath 获得项目路径
 func (conf *Config) GetProjectPath() string {
 	return ParentSavePath + "/" + conf.ProjectName
 }

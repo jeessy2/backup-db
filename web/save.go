@@ -18,6 +18,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	// 覆盖以前的配置
 	conf.Type = request.FormValue("Type")
 	conf.UploadURL = request.FormValue("UploadURL")
+	conf.Username = request.FormValue("Username")
 	conf.Password = request.FormValue("Password")
 
 	conf.ProjectName = request.FormValue("ProjectName")

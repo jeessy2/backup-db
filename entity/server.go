@@ -4,6 +4,4 @@ package entity
 type Server struct {
 	Type          string // client/server
 	UploadURL     string
-	Password      string
-	PasswordBytes []byte
 }
