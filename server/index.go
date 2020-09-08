@@ -6,6 +6,4 @@ func Run() {
 	go DeleteOldBackup()
 	// inspect backup
 	go InspectBackup()
-	// start server
-	go Start()
 }
