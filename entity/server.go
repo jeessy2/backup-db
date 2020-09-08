@@ -3,8 +3,7 @@ package entity
 // Server 服务端配置
 type Server struct {
 	Type          string // client/server
-	IP            string
-	Port          int
+	UploadURL     string
 	Password      string
 	PasswordBytes []byte
 }

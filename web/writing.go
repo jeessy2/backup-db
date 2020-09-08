@@ -26,7 +26,6 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 	conf = &entity.Config{
 		Server: entity.Server{
 			Type:     "client",
-			Port:     9977,
 			Password: "change_it",
 		},
 		SaveDays: 3,

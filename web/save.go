@@ -17,9 +17,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	// 覆盖以前的配置
 	conf.Type = request.FormValue("Type")
-	conf.IP = request.FormValue("IP")
-	port, _ := strconv.Atoi(request.FormValue("Port"))
-	conf.Port = port
+	conf.UploadURL = request.FormValue("UploadURL")
 	conf.Password = request.FormValue("Password")
 
 	conf.ProjectName = request.FormValue("ProjectName")

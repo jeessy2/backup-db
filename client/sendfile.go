@@ -12,7 +12,7 @@ import (
 
 // SendFile send file to server
 func SendFile(conf *entity.Config, fileName string) (err error) {
-	log.Printf("Starting send file to server: %s:%d", conf.Server.IP, conf.Server.Port)
+	log.Printf("Starting send file to server: %s", conf.UploadURL)
 
 	// 创建表单文件
 	// CreateFormFile 用来创建表单，第一个参数是字段名，第二个参数是文件名
@@ -39,11 +39,11 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	contentType := writer.FormDataContentType()
 	// 发送之前必须调用Close()以写入结尾行
 	writer.Close()
-	_, err = http.Post("http://"+conf.IP+"/upload", contentType, buf)
+	_, err = http.Post(conf.UploadURL, contentType, buf)
 	if err != nil {
 		log.Fatalf("Post failed: %s\n", err)
 	} else {
-		log.Printf("Send file to server: %s:%d success!", conf.Server.IP, conf.Server.Port)
+		log.Printf("Send file to server: %s success!", conf.Server.UploadURL)
 	}
 
 	return err
