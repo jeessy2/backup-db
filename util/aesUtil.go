@@ -29,11 +29,11 @@ func AesGcmEncrypt(secretKey string, plainBytes []byte) []byte {
 	conf, err := GetConfig()
 	if err == nil {
 		// GetConfig().Server.SecretKey as nonce
-		ciphertext := aesgcm.Seal(nil, []byte(conf.Password), plainBytes, nil)
+		ciphertext := aesgcm.Seal(nil, conf.PasswordBytes, plainBytes, nil)
 		return ciphertext
 	}
 	return nil
-	
+
 }
 
 // AesGcmDecrypt aes gcm decrypt
@@ -57,12 +57,12 @@ func AesGcmDecrypt(secretKey string, ciphertext []byte) []byte {
 
 	conf, err := GetConfig()
 	if err == nil {
-		plaintext, err := aesgcm.Open(nil, []byte(conf.Password), ciphertext, nil)
+		plaintext, err := aesgcm.Open(nil, conf.PasswordBytes, ciphertext, nil)
 		if err != nil {
 			log.Println(err.Error())
 		}
 		return plaintext
 	}
-	
+
 	return nil
 }

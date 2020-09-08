@@ -2,12 +2,13 @@ package main
 
 import (
 	"backup-db/web"
+
 	"log"
 	"net/http"
 	"time"
 )
 
-const port = "9877"
+const port = "9978"
 
 func main() {
 
@@ -18,6 +19,9 @@ func main() {
 	http.HandleFunc("/", web.WritingConfig)
 	http.HandleFunc("/save", web.Save)
 	http.HandleFunc("/logs", web.Logs)
+
+	// 运行
+	go web.Run()
 
 	err := http.ListenAndServe(":"+port, nil)
 

@@ -11,3 +11,10 @@ type Config struct {
 	BackupPath string
 	SMTPConfig
 }
+
+// ParentSavePath Parent Save Path
+const ParentSavePath = "backup-files"
+
+func (conf *Config) GetProjectPath() string {
+	return ParentSavePath + "/" + conf.ProjectName
+}

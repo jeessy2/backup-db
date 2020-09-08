@@ -1,7 +1,7 @@
 package server
 
 import (
-	"backup-db/client"
+	"backup-db/entity"
 	"backup-db/util"
 	"io/ioutil"
 	"log"
@@ -15,7 +15,7 @@ func DeleteOldBackup() {
 	for {
 		log.Println("Start deleting old backup files")
 		// get all projects
-		projects, err := ioutil.ReadDir(client.ParentSavePath)
+		projects, err := ioutil.ReadDir(entity.ParentSavePath)
 		if err != nil {
 			log.Println("Read dir with error :", err)
 			continue
@@ -23,14 +23,14 @@ func DeleteOldBackup() {
 
 		// delete
 		for _, project := range projects {
-			backupFiles, err := ioutil.ReadDir(client.ParentSavePath + "/" + project.Name())
+			backupFiles, err := ioutil.ReadDir(entity.ParentSavePath + "/" + project.Name())
 			if err != nil {
 				log.Println("Read dir with error :", err)
 				break
 			}
 
 			// delete server files
-			util.DeleteOlderFiles(client.ParentSavePath + "/" + project.Name(), backupFiles)
+			util.DeleteOlderFiles(entity.ParentSavePath+"/"+project.Name(), backupFiles)
 		}
 		// sleep
 		util.SleepForFileDelete()

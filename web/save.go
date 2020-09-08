@@ -22,6 +22,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Port = port
 	conf.Password = request.FormValue("Password")
 
+	conf.ProjectName = request.FormValue("ProjectName")
 	conf.Command = request.FormValue("Command")
 	saveDays, _ := strconv.Atoi(request.FormValue("SaveDays"))
 	conf.SaveDays = saveDays
@@ -42,8 +43,11 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	err = ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
 
 	// clear cache
-	if err != nil {
+	if err == nil {
 		util.ClearConfigCache()
+		go RunOnce()
+	} else {
+		log.Println(err)
 	}
 
 	// 跳转

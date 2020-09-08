@@ -13,5 +13,9 @@ FROM golang:alpine
 WORKDIR /app
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/backup-db /app/backup-db
+COPY --from=builder /app/static /app/static
+
+EXPOSE 9977
+EXPOSE 9978
 ENTRYPOINT /app/backup-db
 LABEL Name=backup-db-server Version=1.0.0

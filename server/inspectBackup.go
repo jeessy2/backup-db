@@ -1,7 +1,7 @@
 package server
 
 import (
-	"backup-db/client"
+	"backup-db/entity"
 	"backup-db/util"
 	"io/ioutil"
 	"log"
@@ -20,7 +20,7 @@ func InspectBackup() {
 func inspectInner() {
 	log.Println("Start inspect backup files")
 	// get all projects
-	projects, err := ioutil.ReadDir(client.ParentSavePath)
+	projects, err := ioutil.ReadDir(entity.ParentSavePath)
 	if err != nil {
 		log.Println("Read dir with error :", err)
 	}
@@ -28,7 +28,7 @@ func inspectInner() {
 	todayString := time.Now().Format("2006-01-02")
 	// delete
 	for _, project := range projects {
-		backupFiles, err := ioutil.ReadDir(client.ParentSavePath + "/" + project.Name())
+		backupFiles, err := ioutil.ReadDir(entity.ParentSavePath + "/" + project.Name())
 		if err != nil {
 			log.Println("Read dir with error :", err)
 			break

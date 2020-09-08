@@ -112,11 +112,13 @@ func RsaDecrypt(ciphertext, keyBytes []byte) []byte {
 	//解析PKCS1格式的私钥
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
+		log.Println(err)
 		panic(err)
 	}
 	// 解密
 	data, err := rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
 	if err != nil {
+		log.Println(err)
 		panic(err)
 	}
 	return data
