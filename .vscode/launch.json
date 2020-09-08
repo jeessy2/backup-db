@@ -11,17 +11,9 @@
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
             "env": {
-                "backup_server_ip": "192.168.1.76",
-                "backup_server_port": "9977",
-                "server_secret_key": "change_it",
-                "backup_project_name": "db_name",
-                "backup_command": "pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db_name\" > #{DATE}.sql",
-                "max_save_days": "30",
-                "notice_email": "277172506@qq.com",
-                "smtp_host": "smtp.office365.com",
-                "smtp_port": "587",
-                "smtp_username": "backup-db-docker@outlook.com",
-                "smtp_password": "kLhHbTC6Ak5B2hw"
+                "port": "9977",
+                "configPath": ".backup_db_client.yaml"
+
             },
             "args": []
         },
@@ -32,16 +24,8 @@
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
             "env": {
-                // set empty when run as server
-                "backup_server_ip": "",
-                "backup_server_port": "9977",
-                "server_secret_key": "change_it",
-                "max_save_days": "30",
-                "notice_email": "277172506@qq.com",
-                "smtp_host": "smtp.office365.com",
-                "smtp_port": "587",
-                "smtp_username": "backup-db-docker@outlook.com",
-                "smtp_password": "kLhHbTC6Ak5B2hw"
+                "port": "9978",
+                "configPath": ".backup_db_server.yaml"
             },
             "args": []
         }

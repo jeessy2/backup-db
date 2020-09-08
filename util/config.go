@@ -62,6 +62,12 @@ func GetConfigFilePath() string {
 		log.Println("Geting current user failed!")
 		return "../.backup_db_docker_config.yaml"
 	}
+
+	// 自定义path
+	if os.Getenv("configPath") != "" {
+		return u.HomeDir + string(os.PathSeparator) + os.Getenv("configPath")
+	}
+
 	return u.HomeDir + string(os.PathSeparator) + ".backup_db_docker_config.yaml"
 }
 

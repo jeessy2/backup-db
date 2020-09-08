@@ -2,99 +2,48 @@ package client
 
 import (
 	"backup-db/entity"
-	"backup-db/util"
-	"bufio"
+	"bytes"
+	"io"
 	"log"
-	"net"
+	"mime/multipart"
+	"net/http"
 	"os"
-	"strconv"
 )
 
 // SendFile send file to server
-func SendFile(conf *entity.Config, fileName string) error {
+func SendFile(conf *entity.Config, fileName string) (err error) {
 	log.Printf("Starting send file to server: %s:%d", conf.Server.IP, conf.Server.Port)
 
-	serverAddr := conf.Server.IP + ":" + strconv.Itoa(conf.Server.Port)
-	tcpAddr, err := net.ResolveTCPAddr("tcp", serverAddr)
+	// 创建表单文件
+	// CreateFormFile 用来创建表单，第一个参数是字段名，第二个参数是文件名
+	buf := new(bytes.Buffer)
+	writer := multipart.NewWriter(buf)
+	writer.WriteField("path", conf.GetProjectPath())
+	formFile, err := writer.CreateFormFile("uploadfile", fileName)
 	if err != nil {
-		log.Printf("Resolve %s with error: %s \n", serverAddr, err)
+		log.Fatalf("Create form file failed: %s\n", err)
 	}
-	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+
+	// 从文件读取数据，写入表单
+	srcFile, err := os.Open(conf.GetProjectPath() + "/" + fileName)
 	if err != nil {
-		log.Println("Connect server error: ", err)
-		return err
+		log.Fatalf("%Open source file failed: s\n", err)
 	}
-	defer conn.Close()
-
-	randomKey, err := util.ReceiveRSAPublicKey(conn)
+	defer srcFile.Close()
+	_, err = io.Copy(formFile, srcFile)
 	if err != nil {
-		return err
+		log.Fatalf("Write to form file falied: %s\n", err)
 	}
 
-	// send file name, should add ProjectPath
-	util.ConnSendString(conn, conf.GetProjectPath()+"/"+fileName, randomKey)
-
-	// it's ok?
-	ok, err := util.ConnReceiveString(conn, randomKey)
-	if err != nil || "ok" != ok {
-		return err
-	}
-
-	return sendFileReal(fileName, serverAddr, conn, randomKey)
-}
-
-func sendFileReal(fileName string, serverAddr string, conn net.Conn, randomKey string) error {
-
-	file, err := os.Open(fileName)
-	fileInfo, err := file.Stat()
+	// 发送表单
+	contentType := writer.FormDataContentType()
+	// 发送之前必须调用Close()以写入结尾行
+	writer.Close()
+	_, err = http.Post("http://"+conf.IP+"/upload", contentType, buf)
 	if err != nil {
-		log.Printf("Read file %s with error: %s\n", fileName, err)
-		return err
-	}
-	defer file.Close()
-
-	// send file size
-	fileSize := int(fileInfo.Size())
-	util.ConnSendString(conn, strconv.Itoa(fileSize), randomKey)
-
-	// it's ok?
-	ok, err := util.ConnReceiveString(conn, randomKey)
-	if err != nil || "ok" != ok {
-		return err
-	}
-
-	currentSendLen := 0
-	progress := util.Progress{
-		CurrentReceivedLen: &currentSendLen,
-		ReceiveOrSend:      "Send",
-		FileSize:           fileSize,
-		FileName:           fileName,
-		RemoteAddr:         serverAddr,
-	}
-	go util.ProgressDisplay(&progress)
-
-	// read file with bufio
-	buffer := make([]byte, 1024)
-	reader := bufio.NewReader(file)
-	for {
-		readLen, err := reader.Read(buffer)
-		if err != nil {
-			if err.Error() != "EOF" {
-				log.Printf("Read file %s with error: %s\n", fileName, err)
-			}
-			break
-		}
-
-		currentSendLen += readLen
-
-		encryptBytes := util.AesGcmEncrypt(randomKey, buffer[:readLen])
-
-		writeLen, err := conn.Write(encryptBytes)
-		if err != nil || writeLen != len(encryptBytes) {
-			log.Printf("Write file to server %s:%s with error: %s\n", serverAddr, fileName, err)
-			progress.StopDisplay = true
-			break
-		}
+		log.Fatalf("Post failed: %s\n", err)
+	} else {
+		log.Printf("Send file to server: %s:%d success!", conf.Server.IP, conf.Server.Port)
 	}
 
 	return err
