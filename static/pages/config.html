@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="jie">
-  <title>Backup-DB-Docker</title>
+  <title>Backup-DB</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="/static/bootstrap.min.css">
   <link rel="stylesheet" href="/static/common.css">
@@ -21,7 +21,7 @@
             viewBox="0 0 24 24" focusable="false">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
             <circle cx="12" cy="13" r="4" /></svg>
-          <strong>Backup-DB-Docker</strong>
+          <strong>Backup-DB</strong>
         </a>
       </div>
     </div>
@@ -55,22 +55,15 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="IP" class="col-sm-2 col-form-label">IP</label>
+                <label for="UploadURL" class="col-sm-2 col-form-label">上传接口</label>
                 <div class="col-sm-10">
-                  <input class="form-control" name="IP" id="IP" value="{{.IP}}" aria-describedby="ip_help">
-                  <small id="ip_help" class="form-text text-muted">如果是服务端不需要填写</small>
+                  <input class="form-control" name="UploadURL" id="UploadURL" value="{{.UploadURL}}" aria-describedby="UploadURL_help">
+                  <small id="UploadURL_help" class="form-text text-muted">如：http://192.168.1.10:9977/upload 可不填写</small>
                 </div>
               </div>
 
               <div class="form-group row">
-                <label for="Port" class="col-sm-2 col-form-label">Port</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="Port" id="Port" value="{{.Port}}" required>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="Password" class="col-sm-2 col-form-label">Password</label>
+                <label for="Password" class="col-sm-2 col-form-label">接口/登陆密码</label>
                 <div class="col-sm-10">
                   <input class="form-control" name="Password" id="Password" value="{{.Password}}" required aria-describedby="password_help">
                   <small id="password_help" class="form-text text-muted">客户端和服务端需保持一致</small>
@@ -87,9 +80,8 @@
               <div class="form-group row">
                 <label for="Command" class="col-sm-2 col-form-label">项目名称</label>
                 <div class="col-sm-10">
-                  <input class="form-control" id="ProjectName" name="ProjectName" rows="3" value="{{.ProjectName}}" aria-describedby="ProjectName_help">
-                  <small id="ProjectName_help" class="form-text text-muted">
-                  </small>
+                  <input class="form-control" id="ProjectName" name="ProjectName" rows="3" value="{{.ProjectName}}" aria-describedby="ProjectName_help" required>
+                  <small id="ProjectName_help" class="form-text text-muted"></small>
                 </div>
               </div>
 
@@ -99,7 +91,7 @@
                   <textarea class="form-control" id="Command" name="Command" rows="3" aria-describedby="Command_help">{{.Command}}</textarea>
                   <small id="Command_help" class="form-text text-muted">
                     <p>必须包含#{DATE}</p>
-                    <p>pg_dump -a "host=192.168.1.x port=5432 user=postgres password=password dbname=db_name" > #{DATE}.sql</p>
+                    <p>pg_dump -a "host=192.168.1.11 port=5432 user=postgres password=password dbname=db_name" > #{DATE}.sql</p>
                   </small>
                 </div>
               </div>
@@ -179,14 +171,14 @@
     getQueryVariable()
 
     function clientCheckedFun() {
-      document.getElementById("IP").disabled = false
+      document.getElementById("UploadURL").disabled = false
       document.getElementById("Command").disabled = false
       document.getElementById("ProjectName").disabled = false
     }
 
     function serverCheckedFun() {
-      document.getElementById("IP").disabled = true
-      document.getElementById("IP").value = ""
+      document.getElementById("UploadURL").disabled = true
+      document.getElementById("UploadURL").value = window.location.href + "upload"
       document.getElementById("Command").disabled = true
       document.getElementById("Command").value = ""
       document.getElementById("ProjectName").disabled = true
