@@ -1,7 +1,7 @@
 package server
 
-// Run runner
-func Run() {
+// RunCycle runner
+func RunCycle() {
 	// delete old backup
 	go DeleteOldBackup()
 	// inspect backup

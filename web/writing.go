@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 )
 
 // WritingConfig 填写配置信息
@@ -25,14 +24,10 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 
 	// default config
 	// 获得环境变量
-	typ := os.Getenv("BACKUP_TYPE")
-	if typ == "" {
-		typ = "client"
-	}
 	conf = &entity.Config{
 		Server: entity.Server{
-			Type:   typ,
-			DBType: os.Getenv("BACKUP_DB_TYPE"),
+			Type:   util.GetEnvType(),
+			DBType: util.GetEnvDBType(),
 		},
 		BackupConfig: entity.BackupConfig{
 			SaveDays: 3,
