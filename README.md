@@ -1,14 +1,60 @@
-# 数据库备份工具
+# 数据库备份工具 [English](README-EN.md)
   原理：在原生的docker镜像基础上，加入一备份工具，增强备份功能。
-  提供postgres, mysql5镜像，可直接使用，如有需要请提issues。
-  - [X] 可以自行构建docker镜像，支持不同的数据库及不同的版本，如mysql8, oracle, sqlserver2017+等等
+  提供postgres, mysql5, mysql8镜像，可直接使用，如有需要请提issues。
   - [X] 支持自定义命令
   - [X] 可以把备份后的文件存入另一台服务器
   - [X] 备份失败邮件通知
   - [X] 服务端每日10点检查上传的备份文件，如未检查到发邮件通知
   - [X] 每日凌晨自动备份
-  - [X] 可设置备份文件最大保存天数(最少3天)
-  - [X] 参考tls实现加密传输备份文件到服务端，rsa非对称交换密钥 + aes-256-gcm对称加密(每次随机密码+固定验证密码)
+  - [X] 可设置备份文件最大保存天数
+  - [x] 网页中配置，简单又方便
+  - [x] 网页中方便快速查看最近50条日志
+  - [x] 可设置登陆用户名密码，默认为空
+
+# v1+最新版本不兼容 0.0.x
+
+
+
+## server
+```
+docker run -d \
+  --name backup-db-server \
+  --restart=always \
+  -p 9977:9977 \
+  -v /opt/backup-files:/app/backup-files \
+  jeessy/backup-db:v1.0.0-server
+```
+
+
+## client (postgress)
+```
+docker run -d \
+  --name backup-db-postgres \
+  --restart=always \
+  -p 9977:9977 \
+  -v /opt/backup-files:/app/backup-files \
+  jeessy/backup-db:v1.0.0-postgres
+```
+
+## client (mysql5)
+```
+docker run -d \
+  --name backup-db-mysql5 \
+  --restart=always \
+  -p 9977:9977 \
+  -v /opt/backup-files:/app/backup-files \
+  jeessy/backup-db:v1.0.0-mysql5
+```
+
+## client (mysql8)
+```
+docker run -d \
+  --name backup-db-mysql8 \
+  --restart=always \
+  -p 9977:9977 \
+  -v /opt/backup-files:/app/backup-files \
+  jeessy/backup-db:v1.0.0-mysql8
+```
 
 # backup databases
   Support all databases and the database images can be find in docker.
@@ -21,78 +67,9 @@
   - [x] The maximum number of days to save backup files can be set (at least 3 days).
   - [x] Reference to the TLS implementation of encryption transfer backup files to the server.
 
-## docker 环境变量说明
+## Release
 ```
-backup_server_ip 不填默认为二次备份的服务器
-backup_server_port 二次备份服务器的端口
-server_secret_key 服务端验证密码
-backup_project_name 项目名称，一般就是数据库名称。
-backup_command 备份命令，必须包含#{DATE}
-max_save_days 备份文件最大保存天数
-notice_email 异常通知的邮箱
-```
-
-
-## server(You don't need this, maybe)
-```
-docker run -d \
---name backup-server \
---restart=always \
--p 9977:9977 \
--p 9988:9987 \
--v /opt/backup-files:/app/backup-files \
-jeessy/backup-db:0.0.7
-
-docker run -d --name backup-db-server --restart=always -p 9978:9978 -p 9977:9977 -v /Users/jie/backup-files-server:/app/backup-files backup-server:0.0.5
-```
-
-## client (postgress)
-```
-docker run -d \
---name backup-db-name \
---restart=always \
--v /opt/backup-files:/app/backup-files \
--e backup_server_ip=192.168.1.76 \
--e backup_server_port=9977 \
--e server_secret_key=please_change_it \
--e backup_project_name=db-name \
--e backup_command="pg_dump -a \"host=192.168.1.11 port=5433 user=postgres password=password dbname=db-name\" > #{DATE}.sql" \
--e max_save_days=30 \
--e notice_email=xxx@qq.com \
--e smtp_host=smtp.office365.com \
--e smtp_port=587 \
--e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=password \
-jeessy/backup-db:postgres-0.0.7
-```
-
-## client (mysql5)
-```
-docker run -d \
---name backup-db-name \
---restart=always \
--v /opt/backup-files:/app/backup-files \
--e backup_server_ip=192.168.1.76 \
--e backup_server_port=9977 \
--e server_secret_key=please_change_it \
--e backup_project_name=db-name \
--e backup_command=mysqldump -h192.168.1.9 -uroot -p123456 db-name > #{DATE}.sql \
--e max_save_days=30 \
--e notice_email=xxx@qq.com \
--e smtp_host=smtp.office365.com \
--e smtp_port=587 \
--e smtp_username=backup-db-docker@outlook.com \
--e smtp_password=password \
-jeessy/backup-db:mysql5-0.0.7
-```
-
-## build docker images (You may not need to build docker images, if you use postgres or mysql5)
-```
-# first git clone
-# change Dockerfile
-# build docker images
-sudo docker build . -f Dockerfile_mysql -t jeessy/backup-db:mysql5-0.0.7
-sudo docker build . -f Dockerfile_postgres -t jeessy/backup-db:postgres-0.0.7
-# build server
-sudo docker build . -f Dockerfile -t jeessy/backup-db:0.0.7
+# 自动发布
+git tag v0.0.x -m "xxx" 
+git push --tags
 ```
