@@ -12,7 +12,7 @@
   - [x] 可设置登陆用户名密码，默认为空
 
 # 1.x.x版本不兼容 0.0.x
-
+![avatar](backup-db-web.png)
 
 
 ## server
