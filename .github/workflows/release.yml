@@ -1,0 +1,62 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            - mysql5
+            ```
+            docker run -d \
+              --name backup-db-mysql5 \
+              --restart=always \
+              -p 9977:9977 \
+              -v /opt/backup-files:/app/backup-files \
+              jeessy/backup-db:${{ github.ref }}-mysql5
+            ```
+            - mysql8
+            ```
+            docker run -d \
+              --name backup-db-mysql8 \
+              --restart=always \
+              -p 9977:9977 \
+              -v /opt/backup-files:/app/backup-files \
+              jeessy/backup-db:${{ github.ref }}-mysql8
+            ```
+            - postgres
+            ```
+            docker run -d \
+              --name backup-db-postgres \
+              --restart=always \
+              -p 9977:9977 \
+              -v /opt/backup-files:/app/backup-files \
+              jeessy/backup-db:${{ github.ref }}-postgres
+            ```
+            - server
+            ```
+            docker run -d \
+              --name backup-db-server \
+              --restart=always \
+              -p 9977:9977 \
+              -v /opt/backup-files:/app/backup-files \
+              jeessy/backup-db:${{ github.ref }}-server
+            ```
+          draft: false
+          prerelease: false
