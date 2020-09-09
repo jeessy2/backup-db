@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"gopkg.in/yaml.v2"
@@ -15,8 +16,15 @@ import (
 func Save(writer http.ResponseWriter, request *http.Request) {
 	conf := &entity.Config{}
 
+	typ := os.Getenv("BACKUP_TYPE")
+	if typ == "" {
+		conf.Type = "client"
+	} else {
+		conf.Type = typ
+	}
+	conf.DBType = os.Getenv("BACKUP_DB_TYPE")
+
 	// 覆盖以前的配置
-	conf.Type = request.FormValue("Type")
 	conf.UploadURL = request.FormValue("UploadURL")
 	conf.Username = request.FormValue("Username")
 	conf.Password = request.FormValue("Password")

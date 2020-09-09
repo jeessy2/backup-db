@@ -5,11 +5,7 @@ package entity
 type Config struct {
 	Server
 	User
-	ProjectName string
-	// 命令
-	Command    string
-	SaveDays   int
-	BackupPath string
+	BackupConfig
 	SMTPConfig
 }
 
