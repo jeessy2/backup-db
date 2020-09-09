@@ -13,6 +13,9 @@ RUN go env -w GO111MODULE=on \
 FROM mysql:5
 WORKDIR /app
 ENV TZ=Asia/Shanghai
+# 标记类型
+ENV BACKUP_TYPE=client
+ENV BACKUP_DB_TYPE=mysql5
 COPY --from=builder /app/backup-db /app/backup-db
 COPY --from=builder /app/static /app/static
 EXPOSE 9978

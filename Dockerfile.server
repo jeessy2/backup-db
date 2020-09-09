@@ -12,10 +12,11 @@ RUN go env -w GO111MODULE=on \
 FROM golang:alpine
 WORKDIR /app
 ENV TZ=Asia/Shanghai
+# 标记类型
+ENV BACKUP_TYPE=server
 COPY --from=builder /app/backup-db /app/backup-db
 COPY --from=builder /app/static /app/static
 
 EXPOSE 9977
-EXPOSE 9978
 ENTRYPOINT /app/backup-db
 LABEL Name=backup-db-server Version=1.0.0
