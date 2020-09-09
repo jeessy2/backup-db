@@ -17,8 +17,6 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	if !strings.HasPrefix(conf.UploadURL, "http") {
 		return nil
 	}
-	log.Printf("Starting send file to server: %s", conf.UploadURL)
-
 	// 创建表单文件
 	// CreateFormFile 用来创建表单，第一个参数是字段名，第二个参数是文件名
 	buf := new(bytes.Buffer)
@@ -37,6 +35,9 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 		return err
 	}
 	defer srcFile.Close()
+
+	log.Printf("开始上传备份文件: %s\n", srcFile.Name())
+
 	_, err = io.Copy(formFile, srcFile)
 	if err != nil {
 		log.Printf("Write to form file falied: %s\n", err)
@@ -56,7 +57,7 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 		buf,
 	)
 	if err != nil {
-		log.Fatalf("Create request error: %s\n", err)
+		log.Printf("Create request error: %s\n", err)
 		return err
 	}
 	req.Header.Set("Content-Type", contentType)
@@ -66,9 +67,9 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	_, err = clt.Do(req)
 
 	if err != nil {
-		log.Fatalf("Post failed: %s\n", err)
+		log.Printf("上传备份文件 %s 失败, Error: %s\n", srcFile.Name(), err)
 	} else {
-		log.Printf("Send file %s to server: %s success!", srcFile.Name(), conf.Server.UploadURL)
+		log.Printf("上传备份文件 %s 成功\n", srcFile.Name())
 	}
 
 	return err

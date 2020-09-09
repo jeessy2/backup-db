@@ -12,7 +12,6 @@ func DeleteOldBackup() {
 	// sleep 30 minutes
 	time.Sleep(30 * time.Minute)
 	for {
-		log.Println("Start deleting old backup files")
 		conf, err := util.GetConfig()
 		if err == nil {
 			// read from current path
