@@ -15,7 +15,7 @@ WORKDIR /app
 ENV TZ=Asia/Shanghai
 # 标记类型
 ENV BACKUP_TYPE=client
-ENV BACKUP_DB_SQL=mysql8
+ENV BACKUP_DB_TYPE=mysql8
 COPY --from=builder /app/backup-db /app/backup-db
 COPY --from=builder /app/static /app/static
 EXPOSE 9978
