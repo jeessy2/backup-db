@@ -83,7 +83,7 @@ func backup(conf *entity.Config) (outFileName os.FileInfo, err error) {
 	shell := exec.Command("bash", shellName)
 	shell.Dir = conf.GetProjectPath()
 	outputBytes, err := shell.CombinedOutput()
-	log.Printf("<span title=\"%s\">执行shell的输出：鼠标移动此处查看</span>", string(outputBytes))
+	log.Printf("<span title=\"%s\">执行shell的输出：鼠标移动此处查看</span>", util.EscapeShell(string(outputBytes)))
 	// execute shell success
 	if err == nil {
 		// find backup file by todayString
@@ -93,13 +93,13 @@ func backup(conf *entity.Config) (outFileName os.FileInfo, err error) {
 		if err != nil {
 			log.Println(err)
 		} else if outFileName.Size() >= 100 {
-			log.Printf("成功备份项目: %s, 文件名: %s", projectName, outFileName.Name())
+			log.Printf("成功备份项目: %s, 文件名: %s\n", projectName, outFileName.Name())
 		} else {
 			err = errors.New(projectName + " 备份后的文件大小小于100字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
 			log.Println(err)
 		}
 	} else {
-		log.Println("Execute shell with error:", err)
+		log.Println("执行备份shell失败: ", util.EscapeShell(string(outputBytes)))
 	}
 
 	return
