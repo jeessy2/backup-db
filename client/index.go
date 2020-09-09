@@ -1,7 +1,7 @@
 package client
 
-// Run run
-func Run() {
+// RunCycle 周期运行
+func RunCycle() {
 	// delete old backup
 	go DeleteOldBackup()
 	// start client
