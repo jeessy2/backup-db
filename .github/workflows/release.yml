@@ -1,10 +1,10 @@
+name: Create Release
+
 on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
-name: Create Release
 
 jobs:
   build:
@@ -13,7 +13,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -30,7 +32,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${{ env.RELEASE_VERSION }}-mysql5
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-mysql5
             ```
             - mysql8
             ```
@@ -39,7 +41,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${{ env.RELEASE_VERSION }}-mysql8
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-mysql8
             ```
             - postgres
             ```
@@ -48,7 +50,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${{ env.RELEASE_VERSION }}-postgres
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-postgres
             ```
             - server
             ```
@@ -57,7 +59,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${{ env.RELEASE_VERSION }}-server
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-server
             ```
           draft: false
           prerelease: false
