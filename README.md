@@ -14,12 +14,13 @@
   - [ ] 钉钉通知
 
 ## docker中使用
-  - 参考[https://github.com/jeessy2/backup-db/releases](https://github.com/jeessy2/backup-db/releases)
-  - 默认没有账号密码，直接回车
-![avatar](backup-db-web.png)
+  - 运行docker容器。参考[https://github.com/jeessy2/backup-db/releases](https://github.com/jeessy2/backup-db/releases)
+  - 登录 http://your_docker_ip:9977 默认没有账号密码，直接回车
+  - 根据你的情况配置，最后点击保存即可
+    ![avatar](backup-db-web.png)
 
 ## 说明
-  - v1版本开始发生变化，不兼容0.0.x
+  - v1版本开始发生重要变化，不兼容0.0.x
   - v1后开始使用web方式来配置
   - 如要加入https，可通过nginx代理
 
