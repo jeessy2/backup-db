@@ -3,6 +3,7 @@ package server
 import (
 	"backup-db/entity"
 	"backup-db/util"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -18,7 +19,7 @@ func InspectBackup() {
 }
 
 func inspectInner() {
-	log.Println("Start inspect backup files")
+	log.Println("开始检测备份文件")
 	// get all projects
 	projects, err := ioutil.ReadDir(entity.ParentSavePath)
 	if err != nil {
@@ -44,7 +45,7 @@ func inspectInner() {
 
 		// not find, send email
 		if !find {
-			util.SendEmail("The \""+project.Name()+"\" is not uploaded today", "Please check your project \""+project.Name()+"\"")
+			util.SendEmail(fmt.Sprintf("%s今日没有上传备份文件", project.Name()), fmt.Sprintf("请检测项目 %s", project.Name()))
 		}
 
 	}
@@ -56,6 +57,6 @@ func sleep() {
 	if sleepHours <= 0 {
 		sleepHours = 24 + 10 - time.Now().Hour()
 	}
-	log.Println("Run inspect backup files again after", sleepHours, "hours")
+	log.Printf("%d小时后再次运行：检测备份文件", sleepHours)
 	time.Sleep(time.Hour * time.Duration(sleepHours))
 }

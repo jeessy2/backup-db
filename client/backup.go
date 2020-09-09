@@ -54,7 +54,7 @@ func prepare(conf *entity.Config) (err error) {
 	os.MkdirAll(conf.GetProjectPath(), 0755)
 
 	if !strings.Contains(conf.Command, "#{DATE}") {
-		err = errors.New("Command must containes #{DATE}")
+		err = errors.New("备份脚本必须包含#{DATE}")
 	}
 
 	return
@@ -62,7 +62,7 @@ func prepare(conf *entity.Config) (err error) {
 
 func backup(conf *entity.Config) (outFileName os.FileInfo, err error) {
 	projectName := conf.ProjectName
-	log.Println("Starting backup:", projectName)
+	log.Printf("正在备份项目: %s ...", projectName)
 
 	todayString := time.Now().Format("2006-01-02")
 	shellString := strings.ReplaceAll(conf.Command, "#{DATE}", todayString)
@@ -82,9 +82,8 @@ func backup(conf *entity.Config) (outFileName os.FileInfo, err error) {
 	// run shell file
 	shell := exec.Command("bash", shellName)
 	shell.Dir = conf.GetProjectPath()
-	shell.Stderr = os.Stderr
-	shell.Stdout = os.Stdout
-	err = shell.Run()
+	outputBytes, err := shell.CombinedOutput()
+	log.Printf("<span title=\"%s\">执行shell的输出：鼠标移动此处查看</span>", string(outputBytes))
 	// execute shell success
 	if err == nil {
 		// find backup file by todayString
@@ -94,9 +93,9 @@ func backup(conf *entity.Config) (outFileName os.FileInfo, err error) {
 		if err != nil {
 			log.Println(err)
 		} else if outFileName.Size() >= 100 {
-			log.Printf("Success backup: %s, file: %s", projectName, outFileName.Name())
+			log.Printf("成功备份项目: %s, 文件名: %s", projectName, outFileName.Name())
 		} else {
-			err = errors.New("The \"" + projectName + "\" backup file size less than 100 bytes, Current size is " + strconv.Itoa(int(outFileName.Size())))
+			err = errors.New(projectName + " 备份后的文件大小小于100字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
 			log.Println(err)
 		}
 	} else {
@@ -115,7 +114,7 @@ func findBackupFile(conf *entity.Config, todayString string) (backupFile os.File
 			return
 		}
 	}
-	err = errors.New("Can't find the backup file which containes " + todayString)
+	err = errors.New("不能找到备份后的文件，没有找到包含 " + todayString + " 的文件名")
 	return
 }
 
@@ -132,7 +131,7 @@ func sendFileAgain(conf *entity.Config, unSendFiles []string) []string {
 
 func sleep() {
 	sleepHours := 24 - time.Now().Hour()
-	log.Println("Run again after", sleepHours, "hours")
+	log.Println("下次运行时间：", sleepHours, "hours")
 	time.Sleep(time.Hour * time.Duration(sleepHours))
 	// time.Sleep(time.Second * 10)
 }

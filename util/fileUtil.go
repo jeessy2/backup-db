@@ -34,9 +34,9 @@ func DeleteOlderFiles(path string, backupFiles []os.FileInfo) {
 				filepath := path + "/" + backupFile.Name()
 				err := os.Remove(filepath)
 				if err != nil {
-					log.Printf("Delete older file %s failed", filepath)
+					log.Printf("删除过期的文件 %s 失败", filepath)
 				} else {
-					log.Printf("Delete older file %s successed", filepath)
+					log.Printf("删除过期的文件 %s 成功", filepath)
 				}
 			}
 		}
@@ -47,6 +47,6 @@ func DeleteOlderFiles(path string, backupFiles []os.FileInfo) {
 // SleepForFileDelete Sleep For File Delete
 func SleepForFileDelete() {
 	sleepHours := 24 - time.Now().Hour()
-	log.Println("Run delete older file after", sleepHours, "hours again")
+	log.Printf("%d小时后再次运行：删除过期的备份文件", sleepHours)
 	time.Sleep(time.Hour * time.Duration(sleepHours))
 }
