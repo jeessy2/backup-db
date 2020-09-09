@@ -13,9 +13,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Compile Release Notes
-        uses: csexton/fictional-release-note-compiler@dne
-        id: notes
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -25,7 +22,6 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body: |
-            ${{ steps.notes.outputs.body }}
             - mysql5
             ```
             docker run -d \
