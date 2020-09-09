@@ -29,7 +29,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${GITHUB_REF#refs/tags/}-mysql5
+              jeessy/backup-db:${{GITHUB_REF}}-mysql5
             ```
             - mysql8
             ```
@@ -38,7 +38,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${GITHUB_REF#refs/tags/}-mysql8
+              jeessy/backup-db:${{GITHUB_REF}}-mysql8
             ```
             - postgres
             ```
@@ -47,7 +47,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${GITHUB_REF#refs/tags/}-postgres
+              jeessy/backup-db:${{GITHUB_REF}}-postgres
             ```
             - server
             ```
@@ -56,7 +56,7 @@ jobs:
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${GITHUB_REF#refs/tags/}-server
+              jeessy/backup-db:${{GITHUB_REF}}-server
             ```
           draft: false
           prerelease: false
