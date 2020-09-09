@@ -8,10 +8,15 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // SendFile send file to server
 func SendFile(conf *entity.Config, fileName string) (err error) {
+
+	if !strings.HasPrefix(conf.UploadURL, "http") {
+		return nil
+	}
 	log.Printf("Starting send file to server: %s", conf.UploadURL)
 
 	// 创建表单文件
