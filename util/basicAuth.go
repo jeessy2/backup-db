@@ -24,6 +24,15 @@ type ViewFunc func(http.ResponseWriter, *http.Request)
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// 帐号或密码为空。跳过
+		user := GetCurrentUser()
+		if user.Username == "" && user.Password == "" {
+			// 执行被装饰的函数
+			f(w, r)
+			return
+		}
+
+		// 认证帐号密码
 		basicAuthPrefix := "Basic "
 
 		// 获取 request header
@@ -36,7 +45,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			)
 			if err == nil {
 				pair := bytes.SplitN(payload, []byte(":"), 2)
-				user := GetCurrentUser()
 				if len(pair) == 2 &&
 					bytes.Equal(pair[0], []byte(user.Username)) &&
 					bytes.Equal(pair[1], []byte(user.Password)) {
