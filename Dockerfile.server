@@ -9,7 +9,7 @@ RUN go env -w GO111MODULE=on \
     && go build -v .
 
 # final stage, build server
-FROM golang:alpine
+FROM alpine
 WORKDIR /app
 ENV TZ=Asia/Shanghai
 # 标记类型
