@@ -10,7 +10,7 @@ import (
 
 // GetCurrentUser 获得当前登陆用户
 func GetCurrentUser() *entity.User {
-	conf, err := GetConfig()
+	conf, err := entity.GetConfigCache()
 	if err == nil {
 		return &conf.User
 	}

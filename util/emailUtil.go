@@ -1,6 +1,7 @@
 package util
 
 import (
+	"backup-db/entity"
 	"crypto/tls"
 	"log"
 	"strings"
@@ -10,7 +11,7 @@ import (
 
 // SendEmail send email
 func SendEmail(subject string, content string) bool {
-	conf, err := GetConfig()
+	conf, err := entity.GetConfigCache()
 	if err == nil && conf.SMTPHost != "" {
 		if strings.Contains(conf.NoticeEmail, "@") {
 			m := gomail.NewMessage()

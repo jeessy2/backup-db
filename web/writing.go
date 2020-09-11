@@ -16,7 +16,7 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	conf, err := util.GetConfig()
+	conf, err := entity.GetConfigCache()
 	if err == nil {
 		tmpl.Execute(writer, conf)
 		return
@@ -24,14 +24,16 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 
 	// default config
 	// 获得环境变量
-	conf = &entity.Config{
+	backupConf := []entity.BackupConfig{}
+	for i := 0; i < 16; i++ {
+		backupConf = append(backupConf, entity.BackupConfig{SaveDays: 30})
+	}
+	conf = entity.Config{
 		Server: entity.Server{
 			Type:   util.GetEnvType(),
 			DBType: util.GetEnvDBType(),
 		},
-		BackupConfig: entity.BackupConfig{
-			SaveDays: 3,
-		},
+		BackupConfig: backupConf,
 		SMTPConfig: entity.SMTPConfig{
 			SMTPPort: 587,
 		},

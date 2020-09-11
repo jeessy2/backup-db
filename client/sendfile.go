@@ -12,7 +12,7 @@ import (
 )
 
 // SendFile send file to server
-func SendFile(conf *entity.Config, fileName string) (err error) {
+func SendFile(conf *entity.Config, backupConf entity.BackupConfig, fileName string) (err error) {
 
 	if !strings.HasPrefix(conf.UploadURL, "http") {
 		return nil
@@ -21,7 +21,7 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	// CreateFormFile 用来创建表单，第一个参数是字段名，第二个参数是文件名
 	buf := new(bytes.Buffer)
 	writer := multipart.NewWriter(buf)
-	writer.WriteField("path", conf.GetProjectPath())
+	writer.WriteField("path", backupConf.GetProjectPath())
 	formFile, err := writer.CreateFormFile("uploadfile", fileName)
 	if err != nil {
 		log.Printf("Create form file failed: %s\n", err)
@@ -29,7 +29,7 @@ func SendFile(conf *entity.Config, fileName string) (err error) {
 	}
 
 	// 从文件读取数据，写入表单
-	srcFile, err := os.Open(conf.GetProjectPath() + "/" + fileName)
+	srcFile, err := os.Open(backupConf.GetProjectPath() + "/" + fileName)
 	if err != nil {
 		log.Printf("Open source file failed: %s\n", err)
 		return err

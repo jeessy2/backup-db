@@ -1,6 +1,7 @@
 package util
 
 import (
+	"backup-db/entity"
 	"log"
 	"os"
 	"strconv"
@@ -22,21 +23,23 @@ func PathExists(path string) bool {
 // DeleteOlderFiles delete older files
 func DeleteOlderFiles(path string, backupFiles []os.FileInfo) {
 
-	conf, err := GetConfig()
+	conf, err := entity.GetConfigCache()
 	if err == nil {
 		ago := time.Now()
-		lastDay, _ := time.ParseDuration("-" + strconv.Itoa(conf.SaveDays*24) + "h")
-		ago = ago.Add(lastDay)
+		for _, conf := range conf.BackupConfig {
+			lastDay, _ := time.ParseDuration("-" + strconv.Itoa(conf.SaveDays*24) + "h")
+			ago = ago.Add(lastDay)
 
-		// delete older file when file numbers gt MaxSaveDays
-		for _, backupFile := range backupFiles {
-			if backupFile.ModTime().Before(ago) {
-				filepath := path + "/" + backupFile.Name()
-				err := os.Remove(filepath)
-				if err != nil {
-					log.Printf("删除过期的文件 %s 失败", filepath)
-				} else {
-					log.Printf("删除过期的文件 %s 成功", filepath)
+			// delete older file when file numbers gt MaxSaveDays
+			for _, backupFile := range backupFiles {
+				if backupFile.ModTime().Before(ago) {
+					filepath := path + "/" + backupFile.Name()
+					err := os.Remove(filepath)
+					if err != nil {
+						log.Printf("删除过期的文件 %s 失败", filepath)
+					} else {
+						log.Printf("删除过期的文件 %s 成功", filepath)
+					}
 				}
 			}
 		}
