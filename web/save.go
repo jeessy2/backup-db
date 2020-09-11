@@ -3,12 +3,8 @@ package web
 import (
 	"backup-db/entity"
 	"backup-db/util"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
-
-	"gopkg.in/yaml.v2"
 )
 
 // Save 保存
@@ -23,11 +19,20 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Username = request.FormValue("Username")
 	conf.Password = request.FormValue("Password")
 
-	conf.ProjectName = request.FormValue("ProjectName")
-	conf.Command = request.FormValue("Command")
-	saveDays, _ := strconv.Atoi(request.FormValue("SaveDays"))
-	conf.SaveDays = saveDays
+	forms := request.PostForm
+	for index, projectName := range forms["ProjectName"] {
+		saveDays, _ := strconv.Atoi(forms["SaveDays"][index])
+		conf.BackupConfig = append(
+			conf.BackupConfig,
+			entity.BackupConfig{
+				ProjectName: projectName,
+				Command:     forms["Command"][index],
+				SaveDays:    saveDays,
+			},
+		)
+	}
 
+	// Email
 	conf.NoticeEmail = request.FormValue("NoticeEmail")
 	conf.SMTPHost = request.FormValue("SMTPHost")
 	smtpPort, _ := strconv.Atoi(request.FormValue("SMTPPort"))
@@ -36,22 +41,18 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.SMTPPassword = request.FormValue("SMTPPassword")
 
 	// 保存到用户目录
-	byt, err := yaml.Marshal(conf)
-	if err != nil {
-		log.Println(err)
-	}
+	err := conf.SaveConfig()
 
-	err = ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
-
-	// clear cache
+	// 没有错误，运行一次
 	if err == nil {
-		util.ClearConfigCache()
 		go RunOnce()
-	} else {
-		log.Println(err)
 	}
 
-	// 跳转
-	http.Redirect(writer, request, "/?saveOk=true", http.StatusFound)
+	// 回写错误信息
+	if err == nil {
+		writer.Write([]byte("ok"))
+	} else {
+		writer.Write([]byte(err.Error()))
+	}
 
 }

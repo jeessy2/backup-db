@@ -3,6 +3,7 @@
   原理：在原生的docker镜像基础上，加入一备份工具，增强备份功能。
   提供postgres, mysql5, mysql8镜像，可直接使用，如有需要请提issues。
   - [X] 支持自定义命令
+  - [x] 支持多个项目备份，最多16个
   - [X] 支持备份后的文件存入另一台服务器
   - [X] 服务端每日10点检查上传的备份文件，如未检查到发邮件通知
   - [X] 每日凌晨自动备份
@@ -17,7 +18,7 @@
   - 运行docker容器。参考[https://github.com/jeessy2/backup-db/releases](https://github.com/jeessy2/backup-db/releases)
   - 登录 http://your_docker_ip:9977 默认没有账号密码，直接回车
   - 根据你的情况配置，最后点击保存即可
-    ![avatar](backup-db-web.png)
+    ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
 
 ## 说明
   - v1版本开始发生重要变化，不兼容0.0.x
