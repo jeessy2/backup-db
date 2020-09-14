@@ -2,7 +2,6 @@ package server
 
 import (
 	"backup-db/entity"
-	"backup-db/util"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -19,37 +18,41 @@ func InspectBackup() {
 }
 
 func inspectInner() {
-	log.Println("开始检测备份文件")
-	// get all projects
-	projects, err := ioutil.ReadDir(entity.ParentSavePath)
-	if err != nil {
-		log.Println("Read dir with error :", err)
-	}
-
-	todayString := time.Now().Format("2006-01-02")
-	// delete
-	for _, project := range projects {
-		backupFiles, err := ioutil.ReadDir(entity.ParentSavePath + "/" + project.Name())
+	conf, err := entity.GetConfigCache()
+	if err == nil {
+		log.Println("开始检测备份文件")
+		// get all projects
+		projects, err := ioutil.ReadDir(entity.ParentSavePath)
 		if err != nil {
 			log.Println("Read dir with error :", err)
-			break
 		}
 
-		find := false
-		for _, backupFile := range backupFiles {
-			if strings.Contains(backupFile.Name(), todayString) {
-				find = true
+		todayString := time.Now().Format("2006-01-02")
+		// delete
+		for _, project := range projects {
+			backupFiles, err := ioutil.ReadDir(entity.ParentSavePath + "/" + project.Name())
+			if err != nil {
+				log.Println("Read dir with error :", err)
 				break
 			}
-		}
 
-		// not find, send email
-		if !find {
-			util.SendEmail(fmt.Sprintf("%s今日没有上传备份文件", project.Name()), fmt.Sprintf("请检测项目 %s", project.Name()))
-		}
+			find := false
+			for _, backupFile := range backupFiles {
+				if strings.Contains(backupFile.Name(), todayString) {
+					find = true
+					break
+				}
+			}
 
+			// not find, send email
+			if !find {
+				conf.SendMessage(
+					fmt.Sprintf("%s 今日没有上传备份文件", project),
+					fmt.Sprintf("%s 今日没有上传备份文件, 请检测!", project),
+				)
+			}
+		}
 	}
-
 }
 
 func sleep() {
