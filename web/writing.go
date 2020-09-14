@@ -34,9 +34,6 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 			DBType: util.GetEnvDBType(),
 		},
 		BackupConfig: backupConf,
-		SMTPConfig: entity.SMTPConfig{
-			SMTPPort: 587,
-		},
 	}
 
 	tmpl.Execute(writer, conf)

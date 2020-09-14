@@ -32,6 +32,10 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		)
 	}
 
+	// DingDing
+	conf.DingDing.WebHook = request.FormValue("WebHook")
+	conf.DingDing.Secret = request.FormValue("Secret")
+
 	// Email
 	conf.NoticeEmail = request.FormValue("NoticeEmail")
 	conf.SMTPHost = request.FormValue("SMTPHost")

@@ -44,8 +44,10 @@ func RunOnce() (unSendFiles []string) {
 						unSendFiles = sendFileAgain(&conf, backupConf, unSendFiles)
 					}
 				} else {
-					// send email
-					util.SendEmail(fmt.Sprintf("The %s is backup failed!", backupConf.ProjectName), err.Error())
+					conf.SendMessage(
+						fmt.Sprintf("%s项目备份失败", backupConf.ProjectName),
+						fmt.Sprintf("%s项目备份失败！错误信息：%s", backupConf.ProjectName, err.Error()),
+					)
 				}
 			}
 		}
@@ -104,7 +106,8 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 			log.Println(err)
 		}
 	} else {
-		log.Println("执行备份shell失败: ", util.EscapeShell(string(outputBytes)))
+		err = fmt.Errorf("执行备份shell失败: %s", util.EscapeShell(string(outputBytes)))
+		log.Println(err)
 	}
 
 	return
