@@ -2,6 +2,7 @@ package web
 
 import (
 	"backup-db/entity"
+	"backup-db/notice"
 	"backup-db/util"
 	"html/template"
 	"log"
@@ -32,6 +33,9 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 		Server: entity.Server{
 			Type:   util.GetEnvType(),
 			DBType: util.GetEnvDBType(),
+		},
+		NoticeConfig: notice.NoticeConfig{
+			BackupSuccessNotice: true,
 		},
 		BackupConfig: backupConf,
 	}
