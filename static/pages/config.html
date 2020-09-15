@@ -106,19 +106,6 @@
             <h5 class="portlet__head">服务配置</h5>
             <div class="portlet__body">
               <input type="hidden" value="{{.Type}}">
-              <div class="form-group row">
-                <label for="UploadURL" class="col-sm-2 col-form-label">二次备份接口</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="UploadURL" id="UploadURL" value="{{.UploadURL}}" aria-describedby="UploadURL_help">
-                  <small id="UploadURL_help" class="form-text text-muted">
-                    {{if eq .Type "client"}}
-                    填写服务端提供的地址，可不填写
-                    {{else}}
-                    服务端提供的地址
-                    {{end}}
-                  </small>
-                </div>
-              </div>
 
               <div class="form-group row">
                 <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
@@ -136,24 +123,17 @@
                 </div>
               </div>
 
-            </div>
-          </div>
-
-          <div class="portlet">
-            <h5 class="portlet__head">钉钉智能群助手</h5>
-            <div class="portlet__body">
-
               <div class="form-group row">
-                <label for="WebHook" class="col-sm-2 col-form-label">WebHook</label>
+                <label for="UploadURL" class="col-sm-2 col-form-label">二次备份接口</label>
                 <div class="col-sm-10">
-                  <input class="form-control" name="WebHook" id="WebHook" value="{{.WebHook}}">
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="Secret" class="col-sm-2 col-form-label">安全设置->加签</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="Secret" id="Secret" value="{{.Secret}}">
+                  <input class="form-control" name="UploadURL" id="UploadURL" value="{{.UploadURL}}" aria-describedby="UploadURL_help">
+                  <small id="UploadURL_help" class="form-text text-muted">
+                    {{if eq .Type "client"}}
+                    填写服务端提供的地址，可不填写
+                    {{else}}
+                    服务端提供的地址，在client填写此接口
+                    {{end}}
+                  </small>
                 </div>
               </div>
 
@@ -161,47 +141,88 @@
           </div>
 
           <div class="portlet">
-            <h5 class="portlet__head">Email通知</h5>
+            <h5 class="portlet__head">通知设置</h5>
             <div class="portlet__body">
 
-              <div class="form-group row">
-                <label for="NoticeEmail" class="col-sm-2 col-form-label">接收人Email</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="NoticeEmail" id="NoticeEmail" value="{{.NoticeEmail}}">
+              <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link active" id="notice_dingding" data-toggle="tab" href="#notice_content_dingding" role="tab">
+                    钉钉智能群助手
+                  </a>
+                  <a class="nav-item nav-link" id="notice_email" data-toggle="tab" href="#notice_content_email" role="tab">
+                    Email
+                  </a>
                 </div>
-              </div>
+              </nav>
+              <div class="tab-content" id="nav-tabContent">
 
-              <div class="form-group row">
-                <label for="SMTPHost" class="col-sm-2 col-form-label">SMTP Host</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="SMTPHost" id="SMTPHost" value="{{.SMTPHost}}">
+                <div class="tab-pane fade show active" id="notice_content_dingding" role="tabpanel">
+                  <br/>
+                  <div class="form-group row">
+                    <label for="WebHook" class="col-sm-2 col-form-label">WebHook</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="WebHook" id="WebHook" value="{{.WebHook}}">
+                      <small id="WebHook_help" class="form-text text-muted">
+                        钉钉电脑端->群设置->智能群助手->添加机器人->自定义
+                      </small>
+                    </div>
+                  </div>
+    
+                  <div class="form-group row">
+                    <label for="Secret" class="col-sm-2 col-form-label">安全设置->加签</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="Secret" id="Secret" value="{{.Secret}}">
+                      <small id="Secret_help" class="form-text text-muted">
+                        只需勾选加签
+                      </small>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="form-group row">
-                <label for="SMTPPort" class="col-sm-2 col-form-label">SMTP Port</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="SMTPPort" id="SMTPPort" value="{{.SMTPPort}}">
+                <div class="tab-pane fade" id="notice_content_email" role="tabpanel">
+                  <br/>
+                  <div class="form-group row">
+                    <label for="NoticeEmail" class="col-sm-2 col-form-label">接收人Email</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="NoticeEmail" id="NoticeEmail" value="{{.NoticeEmail}}">
+                      <small id="NoticeEmail_help" class="form-text text-muted">多个使用,分隔</small>
+                    </div>
+                  </div>
+    
+                  <div class="form-group row">
+                    <label for="SMTPHost" class="col-sm-2 col-form-label">SMTP Host</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="SMTPHost" id="SMTPHost" value="{{.SMTPHost}}">
+                    </div>
+                  </div>
+    
+                  <div class="form-group row">
+                    <label for="SMTPPort" class="col-sm-2 col-form-label">SMTP Port</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="SMTPPort" id="SMTPPort" value="{{.SMTPPort}}">
+                    </div>
+                  </div>
+    
+                  <div class="form-group row">
+                    <label for="SMTPUsername" class="col-sm-2 col-form-label">SMTP Username</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="SMTPUsername" id="SMTPUsername" value="{{.SMTPUsername}}">
+                    </div>
+                  </div>
+    
+                  <div class="form-group row">
+                    <label for="SMTPPassword" class="col-sm-2 col-form-label">SMTP Password</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="SMTPPassword" id="SMTPPassword" value="{{.SMTPPassword}}">
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="form-group row">
-                <label for="SMTPUsername" class="col-sm-2 col-form-label">SMTP Username</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="SMTPUsername" id="SMTPUsername" value="{{.SMTPUsername}}">
-                </div>
               </div>
-
-              <div class="form-group row">
-                <label for="SMTPPassword" class="col-sm-2 col-form-label">SMTP Password</label>
-                <div class="col-sm-10">
-                  <input class="form-control" name="SMTPPassword" id="SMTPPassword" value="{{.SMTPPassword}}">
-                </div>
-              </div>
-              
 
             </div>
           </div>
+
           <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
         </form>
