@@ -12,18 +12,22 @@
   - [x] 网页中方便快速查看最近50条日志
   - [x] 可设置登陆用户名密码，默认为空
   - [x] 邮件通知
-  - [ ] 钉钉通知
+  - [x] 钉钉通知
 
 ## docker中使用
   - 运行docker容器。参考[https://github.com/jeessy2/backup-db/releases](https://github.com/jeessy2/backup-db/releases)
-  - 登录 http://your_docker_ip:9977 默认没有账号密码，直接回车
-  - 根据你的情况配置，最后点击保存即可
+  - 登录 http://your_docker_ip:9977 并配置
     ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
 
 ## 说明
   - v1版本开始发生重要变化，不兼容0.0.x
   - v1后开始使用web方式来配置
   - 如要加入https，可通过nginx代理
+
+## 钉钉通知
+  - 钉钉电脑端->群设置->智能群助手->添加机器人->自定义
+  - 只勾选 `安全设置->加签`
+  - 复制 `WebHook` `加签` 内容到web中
 
 ## Release
 ```
