@@ -17,6 +17,7 @@ type Config struct {
 	Server
 	User
 	BackupConfig []BackupConfig
+	notice.NoticeConfig
 	notice.DingDing
 	notice.EmailConfig
 }

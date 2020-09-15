@@ -39,8 +39,18 @@ func RunOnce() (unSendFiles []string) {
 					// send file to server
 					err = SendFile(&conf, backupConf, outFileName.Name())
 					if err != nil {
+						conf.SendMessage(
+							fmt.Sprintf("%s项目发送到服务端失败", backupConf.ProjectName),
+							fmt.Sprintf("%s项目发送到服务端失败。错误信息：%s", backupConf.ProjectName, err.Error()),
+						)
 						unSendFiles = append(unSendFiles, outFileName.Name())
 					} else {
+						if conf.NoticeConfig.BackupSuccessNotice {
+							conf.SendMessage(
+								fmt.Sprintf("%s项目备份成功", backupConf.ProjectName),
+								fmt.Sprintf("%s项目备份成功！文件名：%s", backupConf.ProjectName, outFileName),
+							)
+						}
 						unSendFiles = sendFileAgain(&conf, backupConf, unSendFiles)
 					}
 				} else {

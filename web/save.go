@@ -32,6 +32,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		)
 	}
 
+	conf.NoticeConfig.BackupSuccessNotice = request.FormValue("BackupSuccessNotice") == "on"
+
 	// DingDing
 	conf.DingDing.WebHook = request.FormValue("WebHook")
 	conf.DingDing.Secret = request.FormValue("Secret")
