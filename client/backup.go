@@ -48,7 +48,7 @@ func RunOnce() (unSendFiles []string) {
 						if conf.NoticeConfig.BackupSuccessNotice {
 							conf.SendMessage(
 								fmt.Sprintf("%s项目备份成功", backupConf.ProjectName),
-								fmt.Sprintf("%s项目备份成功！文件名：%s", backupConf.ProjectName, outFileName),
+								fmt.Sprintf("%s项目备份成功！文件名：%s", backupConf.ProjectName, outFileName.Name()),
 							)
 						}
 						unSendFiles = sendFileAgain(&conf, backupConf, unSendFiles)
