@@ -26,7 +26,7 @@ type DingDing struct {
 // DingDingResp 钉钉通知返回消息
 type DingDingResp struct {
 	Errcode int
-	errmsg  string
+	Errmsg  string
 }
 
 // CanBeSend 能否发送
@@ -82,7 +82,9 @@ func (ding *DingDing) SendMessage(title, message string) (err error) {
 			return nil
 		}
 
-		return fmt.Errorf("发送钉钉消息失败。errcode: %d, errmsg: %s", dingResp.Errcode, dingResp.errmsg)
+		err = fmt.Errorf("发送钉钉消息失败。errcode: %d, errmsg: %s", dingResp.Errcode, dingResp.Errmsg)
+		log.Println(err)
+		return err
 	}
 
 	return errors.New("没有webhook地址")
