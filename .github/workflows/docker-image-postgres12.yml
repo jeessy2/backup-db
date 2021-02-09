@@ -16,8 +16,8 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_PLATFORMS: linux/amd64,linux/arm,linux/arm64
-      DOCKER_FILE: "Dockerfile.postgres"
-      DOCKER_BUILD_TYPE: "postgres"
+      DOCKER_FILE: "Dockerfile.postgres12"
+      DOCKER_BUILD_TYPE: "postgres12"
       DOCKER_REGISTRY: ""
     steps:
       - name: Checkout

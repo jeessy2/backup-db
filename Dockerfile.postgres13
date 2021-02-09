@@ -10,7 +10,7 @@ RUN go env -w GO111MODULE=on \
 
 # final stage
 # you can replace "postgres" to other images, emample: "mysql:5"
-FROM postgres:alpine
+FROM postgres:13-alpine
 WORKDIR /app
 ENV TZ=Asia/Shanghai
 # 标记类型
