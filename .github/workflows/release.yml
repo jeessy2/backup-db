@@ -43,14 +43,23 @@ jobs:
               -v /opt/backup-files:/app/backup-files \
               jeessy/backup-db:${{ steps.vars.outputs.tag }}-mysql8
             ```
-            - postgres
+            - postgres12
             ```
             docker run -d \
               --name backup-db-postgres \
               --restart=always \
               -p 9977:9977 \
               -v /opt/backup-files:/app/backup-files \
-              jeessy/backup-db:${{ steps.vars.outputs.tag }}-postgres
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-postgres12
+            ```
+            - postgres13
+            ```
+            docker run -d \
+              --name backup-db-postgres \
+              --restart=always \
+              -p 9977:9977 \
+              -v /opt/backup-files:/app/backup-files \
+              jeessy/backup-db:${{ steps.vars.outputs.tag }}-postgres13
             ```
             - server
             ```
