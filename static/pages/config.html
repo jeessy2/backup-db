@@ -75,7 +75,7 @@
                       <textarea class="form-control" name="Command" id="Command_{{$i}}" rows="3" aria-describedby="Command_help">{{$v.Command}}</textarea>
                       <small id="Command_help" class="form-text text-muted">
                         {{if eq $.DBType "postgres"}}
-                        例：pg_dump -a "host=192.168.1.11 port=5432 user=postgres password=password dbname=db_name" > #{DATE}.sql
+                        例：PGPASSWORD="password" pg_dump --host 192.168.1.11 --port 5432 --dbname db-name --user postgres --clean --create --file #{DATE}.sql
                         {{else if eq $.DBType "mysql5"}}
                         例：mysqldump -h192.168.1.11 -uroot -p123456 db-name > #{DATE}.sql
                         {{else if eq $.DBType "mysql8"}}
