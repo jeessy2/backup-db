@@ -1,8 +1,8 @@
 package main
 
 import (
-	"backup-db/util"
 	"backup-db/web"
+	"embed"
 	"os"
 
 	"log"
@@ -12,16 +12,21 @@ import (
 
 var defaultPort = "9977"
 
+//go:embed static
+var staticEmbededFiles embed.FS
+
+//go:embed favicon.ico
+var faviconEmbededFile embed.FS
+
 func main() {
-
 	// 启动静态文件服务
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.Handle("/favicon.ico", http.StripPrefix("/", http.FileServer(http.Dir("static"))))
+	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
+	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
 
-	http.HandleFunc("/", util.BasicAuth(web.WritingConfig))
-	http.HandleFunc("/save", util.BasicAuth(web.Save))
-	http.HandleFunc("/logs", util.BasicAuth(web.Logs))
-	http.HandleFunc("/upload", util.BasicAuth(web.Upload))
+	http.HandleFunc("/", web.BasicAuth(web.WritingConfig))
+	http.HandleFunc("/save", web.BasicAuth(web.Save))
+	http.HandleFunc("/logs", web.BasicAuth(web.Logs))
+	http.HandleFunc("/upload", web.BasicAuth(web.Upload))
 
 	// 运行
 	go web.Run()

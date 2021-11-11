@@ -1,22 +1,13 @@
-package util
+package web
 
 import (
 	"backup-db/entity"
 	"bytes"
 	"encoding/base64"
+	"log"
 	"net/http"
 	"strings"
 )
-
-// GetCurrentUser 获得当前登陆用户
-func GetCurrentUser() *entity.User {
-	conf, err := entity.GetConfigCache()
-	if err == nil {
-		return &conf.User
-	}
-
-	return &entity.User{}
-}
 
 // ViewFunc func
 type ViewFunc func(http.ResponseWriter, *http.Request)
@@ -24,9 +15,10 @@ type ViewFunc func(http.ResponseWriter, *http.Request)
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		conf, _ := entity.GetConfigCache()
+
 		// 帐号或密码为空。跳过
-		user := GetCurrentUser()
-		if user.Username == "" && user.Password == "" {
+		if conf.Username == "" && conf.Password == "" {
 			// 执行被装饰的函数
 			f(w, r)
 			return
@@ -46,13 +38,14 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			if err == nil {
 				pair := bytes.SplitN(payload, []byte(":"), 2)
 				if len(pair) == 2 &&
-					bytes.Equal(pair[0], []byte(user.Username)) &&
-					bytes.Equal(pair[1], []byte(user.Password)) {
+					bytes.Equal(pair[0], []byte(conf.Username)) &&
+					bytes.Equal(pair[1], []byte(conf.Password)) {
 					// 执行被装饰的函数
 					f(w, r)
 					return
 				}
 			}
+			log.Printf("%s 登陆失败!\n", r.RemoteAddr)
 		}
 
 		// 认证失败，提示 401 Unauthorized
@@ -60,5 +53,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		// 401 状态码
 		w.WriteHeader(http.StatusUnauthorized)
+		log.Printf("%s 请求登陆!\n", r.RemoteAddr)
 	}
 }

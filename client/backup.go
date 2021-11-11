@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-var unSendFiles = []string{}
-
 // StartBackup start backup db
 func StartBackup() {
 	for {
@@ -26,43 +24,35 @@ func StartBackup() {
 }
 
 // RunOnce 运行一次
-func RunOnce() (unSendFiles []string) {
+func RunOnce() {
 	conf, err := entity.GetConfigCache()
-	if err == nil {
-		// 迭代所有项目
-		for _, backupConf := range conf.BackupConfig {
-			if backupConf.NotEmptyProject() {
-				err := prepare(backupConf)
-				// backup
-				outFileName, err := backup(backupConf)
-				if err == nil {
-					// send file to server
-					err = SendFile(&conf, backupConf, outFileName.Name())
-					if err != nil {
-						conf.SendMessage(
-							fmt.Sprintf("%s项目发送到服务端失败", backupConf.ProjectName),
-							fmt.Sprintf("%s项目发送到服务端失败。错误信息：%s", backupConf.ProjectName, err.Error()),
-						)
-						unSendFiles = append(unSendFiles, outFileName.Name())
-					} else {
-						if conf.NoticeConfig.BackupSuccessNotice {
-							conf.SendMessage(
-								fmt.Sprintf("%s项目备份成功", backupConf.ProjectName),
-								fmt.Sprintf("%s项目备份成功！文件名：%s, 文件大小：%d M", backupConf.ProjectName, outFileName.Name(), outFileName.Size()/1000/1000),
-							)
-						}
-						unSendFiles = sendFileAgain(&conf, backupConf, unSendFiles)
-					}
-				} else {
-					conf.SendMessage(
-						fmt.Sprintf("%s项目备份失败", backupConf.ProjectName),
-						fmt.Sprintf("%s项目备份失败！错误信息：%s", backupConf.ProjectName, err.Error()),
-					)
-				}
+	if err != nil {
+		return
+	}
+	// 迭代所有项目
+	for _, backupConf := range conf.BackupConfig {
+		if backupConf.NotEmptyProject() {
+			err := prepare(backupConf)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			// backup
+			outFileName, err := backup(backupConf)
+			result := entity.BackupResult{ProjectName: backupConf.ProjectName, Result: "失败"}
+			if err == nil {
+				// webhook
+				result.FileName = outFileName.Name()
+				result.FileSize = fmt.Sprintf("%d MB", outFileName.Size()/1000/1000)
+				result.Result = "成功"
+				conf.ExecWebhook(result)
+				// send file to s3
+				SendFile(&conf, backupConf, outFileName.Name())
+			} else {
+				conf.ExecWebhook(result)
 			}
 		}
 	}
-	return
 }
 
 // prepare
@@ -81,11 +71,11 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	projectName := backupConf.ProjectName
 	log.Printf("正在备份项目: %s ...", projectName)
 
-	todayString := time.Now().Format("2006-01-02")
+	todayString := time.Now().Format("2006-01-02 03")
 	shellString := strings.ReplaceAll(backupConf.Command, "#{DATE}", todayString)
 
 	// create shell file
-	shellName := time.Now().Format("2006_01_02_") + "backup.sh"
+	shellName := time.Now().Format("2006_01_02_03") + "backup.sh"
 
 	file, err := os.Create(backupConf.GetProjectPath() + "/" + shellName)
 	file.Chmod(0700)
@@ -100,7 +90,11 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	shell := exec.Command("bash", shellName)
 	shell.Dir = backupConf.GetProjectPath()
 	outputBytes, err := shell.CombinedOutput()
-	log.Printf("<span title=\"%s\">执行shell的输出：鼠标移动此处查看</span>", util.EscapeShell(string(outputBytes)))
+	if len(outputBytes) > 0 {
+		log.Printf("<span title=\"%s\">执行shell的输出：鼠标移动此处查看</span>", util.EscapeShell(string(outputBytes)))
+	} else {
+		log.Printf("执行shell的输出为空")
+	}
 	// execute shell success
 	if err == nil {
 		// find backup file by todayString
@@ -109,10 +103,10 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 		// check file size
 		if err != nil {
 			log.Println(err)
-		} else if outFileName.Size() >= 100 {
+		} else if outFileName.Size() >= 1000 {
 			log.Printf("成功备份项目: %s, 文件名: %s\n", projectName, outFileName.Name())
 		} else {
-			err = errors.New(projectName + " 备份后的文件大小小于100字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
+			err = errors.New(projectName + " 备份后的文件大小小于1000字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
 			log.Println(err)
 		}
 	} else {
@@ -136,20 +130,8 @@ func findBackupFile(backupConf entity.BackupConfig, todayString string) (backupF
 	return
 }
 
-// send file again
-func sendFileAgain(conf *entity.Config, backupConf entity.BackupConfig, unSendFiles []string) []string {
-	newUnSendFils := []string{}
-	for _, file := range unSendFiles {
-		if nil != SendFile(conf, backupConf, file) {
-			newUnSendFils = append(newUnSendFils, file)
-		}
-	}
-	return newUnSendFils
-}
-
 func sleep() {
 	sleepHours := 24 - time.Now().Hour()
 	log.Println("下次运行时间：", sleepHours, "hours")
 	time.Sleep(time.Hour * time.Duration(sleepHours))
-	// time.Sleep(time.Second * 10)
 }
