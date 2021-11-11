@@ -10,26 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "env": {
-                "BACKUP_TYPE": "client",
-                "BACKUP_DB_TYPE": "postgres",
-                "port": "9977",
-                "configPath": ".backup_db_client.yaml"
-
-            },
-            "args": []
-        },
-        {
-            "name": "server",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/main.go",
-            "env": {
-                "BACKUP_TYPE": "server",
-                "port": "9978",
-                "configPath": ".backup_db_server.yaml"
-            },
+            "env": {},
             "args": []
         }
     ]
