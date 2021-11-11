@@ -2,21 +2,17 @@ package web
 
 import (
 	"backup-db/entity"
-	"backup-db/util"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
 	conf := &entity.Config{}
 
-	conf.Type = util.GetEnvType()
-	conf.DBType = util.GetEnvDBType()
-
 	// 覆盖以前的配置
-	conf.UploadURL = request.FormValue("UploadURL")
-	conf.Username = request.FormValue("Username")
+	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
 
 	forms := request.PostForm
@@ -32,19 +28,9 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		)
 	}
 
-	conf.NoticeConfig.BackupSuccessNotice = request.FormValue("BackupSuccessNotice") == "on"
-
-	// DingDing
-	conf.DingDing.WebHook = request.FormValue("WebHook")
-	conf.DingDing.Secret = request.FormValue("Secret")
-
-	// Email
-	conf.NoticeEmail = request.FormValue("NoticeEmail")
-	conf.SMTPHost = request.FormValue("SMTPHost")
-	smtpPort, _ := strconv.Atoi(request.FormValue("SMTPPort"))
-	conf.SMTPPort = smtpPort
-	conf.SMTPUsername = request.FormValue("SMTPUsername")
-	conf.SMTPPassword = request.FormValue("SMTPPassword")
+	// Webhook
+	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
+	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 
 	// 保存到用户目录
 	err := conf.SaveConfig()

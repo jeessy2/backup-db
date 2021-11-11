@@ -2,16 +2,18 @@ package web
 
 import (
 	"backup-db/entity"
-	"backup-db/notice"
-	"backup-db/util"
+	"embed"
 	"html/template"
 	"log"
 	"net/http"
 )
 
+//go:embed writing.html
+var writingEmbedFile embed.FS
+
 // WritingConfig 填写配置信息
 func WritingConfig(writer http.ResponseWriter, request *http.Request) {
-	tmpl, err := template.ParseFiles("./static/pages/config.html")
+	tmpl, err := template.ParseFS(writingEmbedFile, "writing.html")
 	if err != nil {
 		log.Println(err)
 		return
@@ -30,13 +32,6 @@ func WritingConfig(writer http.ResponseWriter, request *http.Request) {
 		backupConf = append(backupConf, entity.BackupConfig{SaveDays: 30})
 	}
 	conf = entity.Config{
-		Server: entity.Server{
-			Type:   util.GetEnvType(),
-			DBType: util.GetEnvDBType(),
-		},
-		NoticeConfig: notice.NoticeConfig{
-			BackupSuccessNotice: true,
-		},
 		BackupConfig: backupConf,
 	}
 
