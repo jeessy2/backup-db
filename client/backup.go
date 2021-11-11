@@ -71,11 +71,11 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	projectName := backupConf.ProjectName
 	log.Printf("正在备份项目: %s ...", projectName)
 
-	todayString := time.Now().Format("2006-01-02 03")
+	todayString := time.Now().Format("2006-01-02_03")
 	shellString := strings.ReplaceAll(backupConf.Command, "#{DATE}", todayString)
 
 	// create shell file
-	shellName := time.Now().Format("2006_01_02_03") + "backup.sh"
+	shellName := time.Now().Format("shell-2006-01-02-03-") + "backup.sh"
 
 	file, err := os.Create(backupConf.GetProjectPath() + "/" + shellName)
 	file.Chmod(0700)
