@@ -34,3 +34,7 @@
 git tag v0.0.x -m "xxx" 
 git push --tags
 ```
+docker run -d -p 5432:5432 --name postgres-test --restart=always -e POSTGRES_PASSWORD=boyoiO0o02019 -e POSTGRES_USER=postgres\
+    postgres -c 'max_connections=1000' 
+
+docker run --name mysql-test -e MYSQL_ROOT_PASSWORD=my-secret-test -p 3306:3306 -d mysql:8

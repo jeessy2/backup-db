@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"backup-db/notice"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,12 +13,9 @@ import (
 // Config yml格式的配置文件
 // go的实体需大写对应config.yml的key, key全部小写
 type Config struct {
-	Server
 	User
 	BackupConfig []BackupConfig
-	notice.NoticeConfig
-	notice.DingDing
-	notice.EmailConfig
+	Webhook
 }
 
 // ConfigCache ConfigCache
@@ -104,19 +100,4 @@ func GetConfigFilePath() string {
 	}
 
 	return u.HomeDir + string(os.PathSeparator) + ".backup_db_docker_config.yaml"
-}
-
-// SendMessage 发送消息
-func (conf *Config) SendMessage(title, message string) (err error) {
-
-	if conf.DingDing.CanBeSend() {
-		err = conf.DingDing.SendMessage(title, message)
-	}
-
-	if conf.EmailConfig.CanBeSend() {
-		err = conf.DingDing.SendMessage(title, message)
-	}
-
-	return err
-
 }
