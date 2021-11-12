@@ -45,12 +45,10 @@ func RunOnce() {
 				result.FileName = outFileName.Name()
 				result.FileSize = fmt.Sprintf("%d MB", outFileName.Size()/1000/1000)
 				result.Result = "成功"
-				conf.ExecWebhook(result)
 				// send file to s3
-				SendFile(&conf, backupConf, outFileName.Name())
-			} else {
-				conf.ExecWebhook(result)
+				go SendFile(&conf, backupConf, outFileName.Name())
 			}
+			conf.ExecWebhook(result)
 		}
 	}
 }
@@ -71,17 +69,17 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	projectName := backupConf.ProjectName
 	log.Printf("正在备份项目: %s ...", projectName)
 
-	todayString := time.Now().Format("2006-01-02_03")
+	todayString := time.Now().Format("2006-01-02_03_04")
 	shellString := strings.ReplaceAll(backupConf.Command, "#{DATE}", todayString)
 
 	// create shell file
-	shellName := time.Now().Format("shell-2006-01-02-03-") + "backup.sh"
+	shellName := time.Now().Format("shell-2006-01-02-03-04-") + "backup.sh"
 
-	file, err := os.Create(backupConf.GetProjectPath() + "/" + shellName)
-	file.Chmod(0700)
+	shellFile, err := os.Create(backupConf.GetProjectPath() + "/" + shellName)
+	shellFile.Chmod(0700)
 	if err == nil {
-		file.WriteString(shellString)
-		file.Close()
+		shellFile.WriteString(shellString)
+		shellFile.Close()
 	} else {
 		log.Println("Create file with error: ", err)
 	}
@@ -95,6 +93,7 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	} else {
 		log.Printf("执行shell的输出为空")
 	}
+
 	// execute shell success
 	if err == nil {
 		// find backup file by todayString
@@ -103,10 +102,12 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 		// check file size
 		if err != nil {
 			log.Println(err)
-		} else if outFileName.Size() >= 1000 {
+		} else if outFileName.Size() >= 500 {
 			log.Printf("成功备份项目: %s, 文件名: %s\n", projectName, outFileName.Name())
+			// success, remove shell file
+			os.Remove(shellFile.Name())
 		} else {
-			err = errors.New(projectName + " 备份后的文件大小小于1000字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
+			err = errors.New(projectName + " 备份后的文件大小小于500字节, 当前大小：" + strconv.Itoa(int(outFileName.Size())))
 			log.Println(err)
 		}
 	} else {
