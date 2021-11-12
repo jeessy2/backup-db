@@ -17,6 +17,7 @@ VOLUME /app/backup-db-files
 
 WORKDIR /app
 RUN apt-get -y update  \
+    && apt-get install -y ca-certificates curl  \
     && apt-get install -y postgresql-client \
     && apt-get install -y default-mysql-client
 
