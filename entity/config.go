@@ -15,6 +15,7 @@ type Config struct {
 	User
 	BackupConfig []BackupConfig
 	Webhook
+	S3Config
 }
 
 // ConfigCache ConfigCache
