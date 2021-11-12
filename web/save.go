@@ -32,11 +32,18 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 
+	// S3
+	conf.Endpoint = strings.TrimSpace(request.FormValue("Endpoint"))
+	conf.AccessKey = strings.TrimSpace(request.FormValue("AccessKey"))
+	conf.SecretKey = strings.TrimSpace(request.FormValue("SecretKey"))
+	conf.BucketName = strings.TrimSpace(request.FormValue("BucketName"))
+
 	// 保存到用户目录
 	err := conf.SaveConfig()
 
 	// 没有错误，运行一次
 	if err == nil {
+		conf.CreateBucketIfNotExist()
 		go RunOnce()
 	}
 
