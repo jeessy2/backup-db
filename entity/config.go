@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/user"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -86,18 +85,7 @@ func (conf *Config) SaveConfig() (err error) {
 	return
 }
 
-// GetConfigFilePath 获得配置文件路径
+// GetConfigFilePath 获得配置文件路径, 保存到备份目录下
 func GetConfigFilePath() string {
-	u, err := user.Current()
-	if err != nil {
-		log.Println("Geting current user failed!")
-		return "../.backup_db_docker_config.yaml"
-	}
-
-	// 自定义path
-	if os.Getenv("configPath") != "" {
-		return u.HomeDir + string(os.PathSeparator) + os.Getenv("configPath")
-	}
-
-	return u.HomeDir + string(os.PathSeparator) + ".backup_db_docker_config.yaml"
+	return ParentSavePath + string(os.PathSeparator) + ".backup_db_config.yaml"
 }

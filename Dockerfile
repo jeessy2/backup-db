@@ -13,6 +13,8 @@ FROM debian:stable-slim
 LABEL name=backup-db
 LABEL url=https://github.com/jeessy2/backup-db
 
+VOLUME /app/backup-db-files
+
 WORKDIR /app
 RUN apt-get -y update  \
     && apt-get install -y postgresql-client \

@@ -1,5 +1,6 @@
 *.exe*
 __debug_bin
 .idea
-backup-files
+backup-db-files
+.backup_db_config.yaml
 .DS_Store

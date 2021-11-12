@@ -18,7 +18,7 @@
     --name backup-db \
     --restart=always \
     -p 9977:9977 \
-    -v /opt/backup-files:/app/backup-files \
+    -v /opt/backup-db-files:/app/backup-db-files \
     jeessy/backup-db
   ```
 - 登录 http://your_docker_ip:9977 并配置
