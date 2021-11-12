@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="jie">
-  <title>数据库备份工具 Backup-db</title>
+  <title>Backup-db 数据库备份工具</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="/static/bootstrap.min.css">
   <link rel="stylesheet" href="/static/common.css">
@@ -18,7 +18,7 @@
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
         <a href="/" class="navbar-brand d-flex align-items-center">
-          <strong>数据库备份工具 Backup-db</strong>
+          <strong>Backup-db</strong>
         </a>
       </div>
     </div>
@@ -68,11 +68,8 @@
                     <div class="col-sm-10">
                       <textarea class="form-control" name="Command" id="Command_{{$i}}" rows="3" aria-describedby="Command_help">{{$v.Command}}</textarea>
                       <small id="Command_help" class="form-text text-muted">
-                        必须包含#{DATE}变量
-                        <br/>
-                        例：PGPASSWORD="password" pg_dump --host 192.168.1.11 --port 5432 --dbname db-name --user postgres --clean --create --file #{DATE}.sql
-                        <br/>
-                        例：mysqldump -h192.168.1.11 -uroot -p123456 db-name > #{DATE}.sql
+                        须包含#{DATE}变量 <a target="blank" href="https://github.com/jeessy2/backup-db#备份脚本参考">备份脚本参考</a> 
+                        <br/>例：mysqldump -h192.168.1.11 -uroot -p123456 db-name > #{DATE}.sql
                       </small>
                     </div>
                   </div>

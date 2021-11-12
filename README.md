@@ -24,6 +24,24 @@
 - 登录 http://your_docker_ip:9977 并配置
   ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
 
+
+## 备份脚本参考
+ - postgres
+
+    |  说明   | 备份脚本  |
+    |  ----  | ----  |
+    | 备份单个  | PGPASSWORD="password" pg_dump --host 192.168.1.11 --port 5432 --dbname db-name --user postgres --clean --create --file #{DATE}.sql |
+    | 备份全部  | PGPASSWORD="password" pg_dumpall --host 192.168.1.11 --port 5432 --user postgres --clean --file #{DATE}.sql |
+    | 还原  | psql -U postgres -f 2021-11-12_10_29.sql |
+
+ -  mysql/mariadb
+
+    |  说明   | 备份脚本  |
+    |  ----  | ----  |
+    | 备份单个  | mysqldump -h192.168.1.11 -uroot -p123456 db-name > #{DATE}.sql |
+    | 备份全部  | mysqldump -h192.168.1.11 -uroot -p123456 --all-databases > #{DATE}.sql |
+    | 还原  | mysql -uroot -p123456 db-name <2021-11-12_10_29.sql |
+
 ## webhook
 - 支持webhook, 备份更新成功或不成功时, 会回调填写的URL
 - 支持的变量
