@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/save", web.BasicAuth(web.Save))
 	http.HandleFunc("/logs", web.BasicAuth(web.Logs))
 	http.HandleFunc("/upload", web.BasicAuth(web.Upload))
+	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
 	// 运行
 	go web.Run()
