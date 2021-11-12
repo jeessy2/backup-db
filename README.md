@@ -7,7 +7,6 @@
   - [x] 每日凌晨自动备份
   - [x] 可设置备份文件最大保存天数
   - [x] 网页中配置，简单又方便
-  - [x] 网页中方便快速查看最近50条日志
   - [x] 可设置登陆用户名密码，默认为空
   - [x] webhook通知
 
@@ -25,7 +24,7 @@
   ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
 
 
-## 备份脚本参考
+## 备份参考
  - postgres
 
     |  说明   | 备份脚本  |

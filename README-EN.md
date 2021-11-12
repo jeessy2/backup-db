@@ -1,15 +1,20 @@
-## backup databases
-  Support all databases and the database images can be find in docker.
-  - [X] Support for custom backup commands.
-  - [X] Obsolete files will be deleted automatically.
-  - [X] You can copy the backup files to another server.
-  - [x] Send email when backup failed.
-  - [x] The server checks the backup files that are not uploaded at 10 o'clock every day. If the backup files are not checked, an email notice will be sent
-  - [x] Automatic backup in every night.
-  - [x] The maximum number of days to save backup files can be set.
-  - [x] Use web configuration
+# backup-db
+  A database backup tool with web interfaces.
+  - [x] Support custom commands.
+  - [x] Obsolete files will be deleted automatically.
+  - [ ] Support the backup files copy to simple data storage(s3).
+  - [x] Automatic backup in everyday night.
+  - [x] Webhook support
 
 ## use in docker
-[https://github.com/jeessy2/backup-db/releases](https://github.com/jeessy2/backup-db/releases)
+  ```
+    docker run -d \
+    --name backup-db \
+    --restart=always \
+    -p 9977:9977 \
+    -v /opt/backup-db-files:/app/backup-db-files \
+    jeessy/backup-db
+  ```
 
-![avatar](backup-db-web.png)
+  ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
+
