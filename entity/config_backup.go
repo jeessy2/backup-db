@@ -8,7 +8,7 @@ type BackupConfig struct {
 }
 
 // ParentSavePath Parent Save Path
-const ParentSavePath = "backup-files"
+const ParentSavePath = "backup-db-files"
 
 // GetProjectPath 获得项目路径
 func (backupConfig *BackupConfig) GetProjectPath() string {
