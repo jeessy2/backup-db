@@ -59,7 +59,7 @@ func prepare(backupConf entity.BackupConfig) (err error) {
 	os.MkdirAll(backupConf.GetProjectPath(), 0755)
 
 	if !strings.Contains(backupConf.Command, "#{DATE}") {
-		err = errors.New("备份脚本必须包含#{DATE}")
+		err = errors.New("项目: " + backupConf.ProjectName + "的备份脚本须包含#{DATE}")
 	}
 
 	return

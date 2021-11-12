@@ -14,7 +14,7 @@ GOPATH=$(shell `which go` env GOPATH)
 build: $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
-build_postgres_image:
+build_image:
 	@$(DOCKER_CMD) build -f ./Dockerfile -t backup-db:$(VERSION) .
 
 test:
