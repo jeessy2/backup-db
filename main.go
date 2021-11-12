@@ -39,7 +39,7 @@ func main() {
 	err := http.ListenAndServe(":"+defaultPort, nil)
 
 	if err != nil {
-		log.Println("启动端口发生异常, 1分钟后自动关闭此窗口", err)
+		log.Println("启动端口发生异常, 请检测是否被占用", err)
 		time.Sleep(time.Minute)
 	}
 

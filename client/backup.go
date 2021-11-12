@@ -46,7 +46,7 @@ func RunOnce() {
 				result.FileSize = fmt.Sprintf("%d MB", outFileName.Size()/1000/1000)
 				result.Result = "成功"
 				// send file to s3
-				go SendFile(&conf, backupConf, outFileName.Name())
+				go conf.UploadFile(backupConf.GetProjectPath() + string(os.PathSeparator) + outFileName.Name())
 			}
 			conf.ExecWebhook(result)
 		}
@@ -75,7 +75,7 @@ func backup(backupConf entity.BackupConfig) (outFileName os.FileInfo, err error)
 	// create shell file
 	shellName := time.Now().Format("shell-2006-01-02-03-04-") + "backup.sh"
 
-	shellFile, err := os.Create(backupConf.GetProjectPath() + "/" + shellName)
+	shellFile, err := os.Create(backupConf.GetProjectPath() + string(os.PathSeparator) + shellName)
 	shellFile.Chmod(0700)
 	if err == nil {
 		shellFile.WriteString(shellString)
