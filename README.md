@@ -24,7 +24,7 @@
   ![avatar](https://raw.githubusercontent.com/jeessy2/backup-db/master/backup-db-web.png)
 
 
-## 备份参考
+## 备份脚本参考
  - postgres
 
     |  说明   | 备份脚本  |
