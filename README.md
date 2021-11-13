@@ -1,3 +1,5 @@
+## 推荐使用 https://github.com/jeessy2/backup-x backup-x从backup-db发展而来，不仅仅支持数据库备份，所以改名到backup-x
+
 <a href="https://github.com/jeessy2/backup-db/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/backup-db.svg?logo=github&style=flat-square"></a>
 # 数据库备份工具 [English](README-EN.md)
   原理：Docker容器中安装postgres-client和mysql-client，并加入本备份工具，增强备份功能。
